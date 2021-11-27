@@ -9,15 +9,12 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import io.metaloom.poc.db.PocElement;
 import io.metaloom.poc.db.PocUser;
 
 @Entity
 @Table(name = "users")
-public class PocUserImpl implements PocUser {
-
-	@Id
-	@GeneratedValue
-	private UUID uuid;
+public class PocUserImpl extends AbstractElement implements PocUser {
 
 	@NotNull
 	@Size(max = 100)
@@ -35,14 +32,13 @@ public class PocUserImpl implements PocUser {
 
 	private String passwordHash;
 
-	@Override
-	public UUID getUuid() {
-		return uuid;
+	public PocUserImpl(String username) {
+		this.username = username;
 	}
 
 	@Override
 	public PocUser setUuid(UUID uuid) {
-		this.uuid = uuid;
+		super.setUuid(uuid);
 		return this;
 	}
 

@@ -1,4 +1,4 @@
-package io.metaloom.loom.hibernate;
+package io.metaloom.poc.db;
 
 import org.junit.Before;
 import org.junit.Rule;

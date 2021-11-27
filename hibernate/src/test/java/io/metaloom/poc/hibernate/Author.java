@@ -1,4 +1,4 @@
-package io.metaloom.loom.hibernate;
+package io.metaloom.poc.hibernate;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
