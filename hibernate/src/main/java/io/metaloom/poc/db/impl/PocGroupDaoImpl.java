@@ -2,6 +2,8 @@ package io.metaloom.poc.db.impl;
 
 import java.util.UUID;
 
+import org.hibernate.reactive.stage.Stage.SessionFactory;
+
 import io.metaloom.poc.db.PocGroup;
 import io.metaloom.poc.db.PocGroupDao;
 import io.metaloom.poc.db.PocUser;
@@ -11,6 +13,10 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 
 public class PocGroupDaoImpl extends AbstractDao implements PocGroupDao {
+
+	public PocGroupDaoImpl(SessionFactory factory) {
+		super(factory);
+	}
 
 	@Override
 	public Single<? extends PocGroup> createGroup(String name) {
