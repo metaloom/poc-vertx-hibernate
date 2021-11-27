@@ -10,6 +10,7 @@
 	<modules>
 		<module>bom</module>
 		<module>api</module>
+		<module>io-uring</module>
 		<module>hibernate</module>
 		<module>flyway</module>
 		<module>rest</module>

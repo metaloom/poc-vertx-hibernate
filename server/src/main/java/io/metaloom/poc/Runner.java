@@ -1,14 +1,36 @@
 package io.metaloom.poc;
 
+import io.metaloom.poc.server.ServerVerticle;
+import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
-import io.vertx.core.http.HttpServer;
+import io.vertx.core.VertxOptions;
 
 public class Runner {
 
 	public static void main(String[] args) {
-		Vertx vertx = Vertx.vertx();
-		
-		HttpServer server = vertx.createHttpServer();
+		VertxOptions vertxOptions = new VertxOptions();
+		vertxOptions.setPreferNativeTransport(true);
+
+		Vertx vertx = Vertx.vertx(vertxOptions);
+		if (vertx.isNativeTransportEnabled()) {
+			System.out.println("Native transports have been enabled.");
+		} else {
+			System.err.println("Native transports have not been enabled. Maybe you are not running this on x86_64 linux");
+			System.err.println("Stopping server..");
+			System.exit(10);
+		}
+
+		DeploymentOptions options = new DeploymentOptions();
+		int nVerticles = Runtime.getRuntime().availableProcessors() * 2;
+		options.setInstances(nVerticles);
+		System.out.println("Deploying {" + nVerticles + "} verticles");
+		vertx.deployVerticle(ServerVerticle.class, options, ch -> {
+			if (ch.failed()) {
+				ch.cause().printStackTrace();
+			} else {
+				System.out.println("Server verticles deployed.");
+			}
+		});
 	}
 
 }

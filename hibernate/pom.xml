@@ -61,7 +61,16 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
-
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.metaloom.poc</groupId>
+			<artifactId>poc-vertx-hibernate-flyway</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 </project>

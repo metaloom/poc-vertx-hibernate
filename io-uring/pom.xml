@@ -10,12 +10,8 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>poc-vertx-hibernate-server</artifactId>
-	<name>Vert.x Hibernate PoC - Server</name>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
+	<artifactId>poc-vertx-hibernate-io-uring</artifactId>
+	<name>Vert.x Hibernate PoC - IO Uring</name>
 
 	<dependencyManagement>
 		<dependencies>
@@ -30,19 +26,24 @@
 	</dependencyManagement>
 
 	<dependencies>
-		<dependency>
-			<groupId>io.metaloom.poc</groupId>
-			<artifactId>poc-vertx-hibernate-io-uring</artifactId>
-		</dependency>
+		<!-- Vert.x -->
 		<dependency>
 			<groupId>io.vertx</groupId>
-			<artifactId>vertx-rx-java3</artifactId>
+			<artifactId>vertx-web</artifactId>
 		</dependency>
 
+		<!-- Netty -->
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
+			<groupId>io.netty.incubator</groupId>
+			<artifactId>netty-incubator-transport-native-io_uring</artifactId>
+			<version>0.0.10.Final-SNAPSHOT</version>
+			<classifier>linux-x86_64</classifier>
+		</dependency>
+
+		<!-- Utility -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
 		</dependency>
 	</dependencies>
 
