@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.hibernate.reactive.stage.Stage.SessionFactory;
 
 import io.metaloom.poc.db.PocGroupDao;
+import io.metaloom.poc.db.PocUser;
 import io.metaloom.poc.db.PocUserDao;
 import io.metaloom.poc.db.impl.PocGroupDaoImpl;
 import io.metaloom.poc.db.impl.PocUserDaoImpl;
@@ -15,6 +16,8 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 
@@ -104,12 +107,16 @@ public class ServerVerticle extends AbstractVerticle {
 	}
 
 	private void listUsers(RoutingContext rc) {
-		userDao.loadUsers().subscribe(u -> {
-			rc.response().write(u.getUuid().toString());
+		userDao.loadUsers().toList().subscribe(list -> {
+			JsonObject json = new JsonObject();
+			JsonArray users = new JsonArray();
+			for (PocUser user : list) {
+				users.add(user.getUuid().toString());
+			}
+			json.put("users", users);
+			rc.end(json.toBuffer());
 		}, err -> {
 			rc.fail(err);
-		}, () -> {
-			rc.end("End");
 		});
 	}
 

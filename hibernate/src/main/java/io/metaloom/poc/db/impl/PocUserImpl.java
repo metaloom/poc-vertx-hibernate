@@ -29,6 +29,9 @@ public class PocUserImpl extends AbstractElement implements PocUser {
 
 	private String passwordHash;
 
+	public PocUserImpl() {
+	}
+
 	public PocUserImpl(String username) {
 		this.username = username;
 	}

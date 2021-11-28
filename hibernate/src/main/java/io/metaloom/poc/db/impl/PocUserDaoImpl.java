@@ -56,7 +56,7 @@ public class PocUserDaoImpl extends AbstractDao implements PocUserDao {
 	@Override
 	public Observable<? extends PocUser> loadUsers() {
 		CompletionStage<List<PocUserImpl>> stage = factory.withSession(session -> {
-			Query<PocUserImpl> q = session.createQuery("FROM USERS", PocUserImpl.class);
+			Query<PocUserImpl> q = session.createQuery("from PocUserImpl", PocUserImpl.class);
 			CompletionStage<List<PocUserImpl>> list = q.getResultList();
 			return list;
 		});
