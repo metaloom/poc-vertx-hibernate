@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Maybe;
+import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 
 public interface PocUserDao {
@@ -39,5 +40,12 @@ public interface PocUserDao {
 	 * @return
 	 */
 	Completable deleteUser(PocUser user);
+
+	/**
+	 * Load all users.
+	 * 
+	 * @return
+	 */
+	Observable<? extends PocUser> loadUsers();
 
 }

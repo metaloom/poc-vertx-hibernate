@@ -7,7 +7,7 @@ import io.metaloom.poc.option.DatabaseOptions;
 /**
  * Preconfigured {@link PocPostgreSQLContainer}
  */
-public class PocPostgreSQLContainer extends  PostgreSQLContainer<PocPostgreSQLContainer> {
+public class PocPostgreSQLContainer extends PostgreSQLContainer<PocPostgreSQLContainer> {
 
 	public static final String DEFAULT_IMAGE = "postgres:13.2";
 
@@ -29,7 +29,7 @@ public class PocPostgreSQLContainer extends  PostgreSQLContainer<PocPostgreSQLCo
 		options.setUsername(getUsername());
 		options.setPassword(getPassword());
 		options.setDatabaseName(getDatabaseName());
-		options.setJDBCUrl("jdbc:postgresql://" + getContainerIpAddress() +":"  + getPort()+ "/" + getDatabaseName());
+		options.setJDBCUrl("jdbc:postgresql://" + getContainerIpAddress() + ":" + getPort() + "/" + getDatabaseName());
 		return options;
 	}
 }

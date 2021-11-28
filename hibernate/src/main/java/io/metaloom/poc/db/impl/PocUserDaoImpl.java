@@ -1,17 +1,17 @@
 package io.metaloom.poc.db.impl;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletionStage;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
+import org.hibernate.reactive.stage.Stage.Query;
 import org.hibernate.reactive.stage.Stage.SessionFactory;
 
 import io.metaloom.poc.db.PocUser;
 import io.metaloom.poc.db.PocUserDao;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Maybe;
+import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 
 public class PocUserDaoImpl extends AbstractDao implements PocUserDao {
@@ -26,7 +26,8 @@ public class PocUserDaoImpl extends AbstractDao implements PocUserDao {
 			return Single.error(new NullPointerException("Username must be set"));
 		}
 		PocUser user = new PocUserImpl(username);
-		Completable c = Completable.fromCompletionStage(factory.withTransaction((session, tx) -> session.persist(user)));
+		CompletionStage<Void> stage = factory.withTransaction((session, tx) -> session.persist(user));
+		Completable c = Completable.fromCompletionStage(stage);
 		return c.toSingle(() -> user);
 	}
 
@@ -50,6 +51,18 @@ public class PocUserDaoImpl extends AbstractDao implements PocUserDao {
 			return session.remove(user).thenAccept(v -> session.flush());
 		});
 		return Completable.fromCompletionStage(stage);
+	}
+
+	@Override
+	public Observable<? extends PocUser> loadUsers() {
+		CompletionStage<List<PocUserImpl>> stage = factory.withSession(session -> {
+			Query<PocUserImpl> q = session.createQuery("FROM USERS", PocUserImpl.class);
+			CompletionStage<List<PocUserImpl>> list = q.getResultList();
+			return list;
+		});
+		return Single.fromCompletionStage(stage).flatMapObservable(list -> {
+			return Observable.fromIterable(list);
+		});
 	}
 
 }

@@ -15,7 +15,7 @@ public class HibernateUtilTest {
 	@Test
 	public void testCreateSessionFactory() {
 		DatabaseOptions options = container.getOptions();
-		SessionFactory factory = HibernateUtil.sessionFactory(options.getJdbcUrl(), options.getUsername(), options.getPassword());
+		SessionFactory factory = HibernateUtil.sessionFactory(options.getJdbcUrl(), options.getUsername(), options.getPassword(), true);
 		System.out.println(factory.getClass().getName());
 	}
 }

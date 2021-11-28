@@ -30,20 +30,26 @@
 	</dependencyManagement>
 
 	<dependencies>
+		<!-- Project -->
 		<dependency>
 			<groupId>io.metaloom.poc</groupId>
 			<artifactId>poc-vertx-hibernate-io-uring</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>io.metaloom.poc</groupId>
+			<artifactId>poc-vertx-hibernate-hib</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+
+		<!-- Extra -->
+		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-rx-java3</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 
 </project>

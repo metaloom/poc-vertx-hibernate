@@ -18,7 +18,7 @@ public final class HibernateUtil {
 
 	}
 
-	public static SessionFactory sessionFactory(String url, String user, String pass) {
+	public static SessionFactory sessionFactory(String url, String user, String pass, boolean logEnabled) {
 		Configuration configuration = new Configuration();
 		Properties settings = new Properties();
 
@@ -29,8 +29,10 @@ public final class HibernateUtil {
 		settings.put(Environment.POOL_SIZE, "10");
 
 		// Logging
-		settings.put(Environment.SHOW_SQL, "true");
-		settings.put(Environment.FORMAT_SQL, "true");
+		if (logEnabled) {
+			settings.put(Environment.SHOW_SQL, "true");
+			settings.put(Environment.FORMAT_SQL, "true");
+		}
 		settings.put(Environment.HIGHLIGHT_SQL, "false");
 
 		// Control

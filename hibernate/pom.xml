@@ -55,17 +55,17 @@
 			<groupId>io.vertx</groupId>
 		</dependency>
 
-		<!-- Test -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
+		<!-- Container support -->
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>postgresql</artifactId>
-			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+
+		<!-- Test -->
 		<dependency>
 			<groupId>io.metaloom.poc</groupId>
 			<artifactId>poc-vertx-hibernate-flyway</artifactId>

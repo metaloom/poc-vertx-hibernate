@@ -18,7 +18,7 @@ public class UserDaoTest extends AbstractDaoTest {
 	public void setupHibernate() {
 		DatabaseOptions options = container.getOptions();
 		ReactiveSessionFactoryImpl rxFactory = (ReactiveSessionFactoryImpl) HibernateUtil.sessionFactory(options.getJdbcUrl(), options.getUsername(),
-			options.getPassword());
+			options.getPassword(), true);
 		factory = rxFactory.unwrap(SessionFactory.class);
 	}
 
@@ -39,12 +39,12 @@ public class UserDaoTest extends AbstractDaoTest {
 		// groupDao.addUserToGroup(group1, user2);
 	}
 
-//	@Test
-//	public void testUserGroup() {
-//		PocGroupDao groupDao = new PocGroupDaoImpl(factory);
-//		PocGroup group1 = groupDao.createGroup("guests").blockingGet();
-//		PocGroup group2 = groupDao.createGroup("admins").blockingGet();
-//		PocGroup group3 = groupDao.createGroup("editors").blockingGet();
-//	}
+	// @Test
+	// public void testUserGroup() {
+	// PocGroupDao groupDao = new PocGroupDaoImpl(factory);
+	// PocGroup group1 = groupDao.createGroup("guests").blockingGet();
+	// PocGroup group2 = groupDao.createGroup("admins").blockingGet();
+	// PocGroup group3 = groupDao.createGroup("editors").blockingGet();
+	// }
 
 }
