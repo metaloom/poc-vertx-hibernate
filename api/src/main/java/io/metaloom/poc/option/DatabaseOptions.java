@@ -12,6 +12,8 @@ public class DatabaseOptions {
 
 	public static final String DEFAULT_DATABASE_NAME = "loom";
 
+	public static final String DEFAULT_JDBC_URL = "jdbc:postgresql://" + DEFAULT_HOST + ":" + DEFAULT_PORT + "/" + DEFAULT_DATABASE_NAME;
+
 	private String host = DEFAULT_HOST;
 
 	private int port = DEFAULT_PORT;
@@ -21,6 +23,8 @@ public class DatabaseOptions {
 	private String password = DEFAULT_PASSWORD;
 
 	private String databaseName = DEFAULT_DATABASE_NAME;
+
+	private String jdbcUrl = DEFAULT_JDBC_URL;
 
 	public String getHost() {
 		return host;
@@ -64,6 +68,15 @@ public class DatabaseOptions {
 
 	public DatabaseOptions setUsername(String username) {
 		this.username = username;
+		return this;
+	}
+
+	public String getJdbcUrl() {
+		return jdbcUrl;
+	}
+
+	public DatabaseOptions setJDBCUrl(String jdbcUrl) {
+		this.jdbcUrl = jdbcUrl;
 		return this;
 	}
 

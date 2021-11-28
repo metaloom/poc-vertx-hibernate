@@ -3,6 +3,9 @@ package io.metaloom.poc.db.impl;
 import java.util.UUID;
 import java.util.concurrent.CompletionStage;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 import org.hibernate.reactive.stage.Stage.SessionFactory;
 
 import io.metaloom.poc.db.PocUser;

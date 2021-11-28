@@ -29,6 +29,7 @@ public class PocPostgreSQLContainer extends  PostgreSQLContainer<PocPostgreSQLCo
 		options.setUsername(getUsername());
 		options.setPassword(getPassword());
 		options.setDatabaseName(getDatabaseName());
+		options.setJDBCUrl("jdbc:postgresql://" + getContainerIpAddress() +":"  + getPort()+ "/" + getDatabaseName());
 		return options;
 	}
 }

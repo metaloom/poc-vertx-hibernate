@@ -2,8 +2,13 @@ package io.metaloom.poc.db.impl;
 
 import java.util.UUID;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 import io.metaloom.poc.db.PocGroup;
 
+@Entity
+@Table(name = "groups")
 public class PocGroupImpl extends AbstractElement implements PocGroup {
 
 	private String name;
@@ -27,6 +32,20 @@ public class PocGroupImpl extends AbstractElement implements PocGroup {
 	public PocGroup setName(String name) {
 		this.name = name;
 		return this;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof PocGroupImpl) {
+			return getUuid().equals(((PocGroupImpl) obj).getUuid());
+		} else {
+			return super.equals(obj);
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		return getUuid().hashCode();
 	}
 
 }
