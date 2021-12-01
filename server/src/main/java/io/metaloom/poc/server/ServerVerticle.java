@@ -1,5 +1,7 @@
 package io.metaloom.poc.server;
 
+import static io.metaloom.poc.server.ResponseHelper.sendJson;
+import static io.metaloom.poc.server.ResponseHelper.sendMessage;
 import static io.vertx.core.http.HttpMethod.DELETE;
 import static io.vertx.core.http.HttpMethod.GET;
 import static io.vertx.core.http.HttpMethod.POST;
@@ -17,6 +19,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava3.core.AbstractVerticle;
 import io.vertx.rxjava3.core.buffer.Buffer;
 import io.vertx.rxjava3.ext.web.Router;
+import io.vertx.rxjava3.ext.web.handler.BodyHandler;
 
 public class ServerVerticle extends AbstractVerticle {
 
@@ -65,7 +68,11 @@ public class ServerVerticle extends AbstractVerticle {
 	private Router createRouter() {
 		Router router = Router.router(vertx);
 
+		// Internal handlers
+		router.route().handler(BodyHandler.create());
 		addFailureHandler(router);
+
+		// Exposed routes
 		addUserCrud(router);
 		addGroupCrud(router);
 
@@ -74,13 +81,6 @@ public class ServerVerticle extends AbstractVerticle {
 
 	private void addFailureHandler(Router router) {
 		router.route().failureHandler(rc -> {
-			// Handle common 404 errors
-			if (rc.statusCode() == 404) {
-				JsonObject json = new JsonObject();
-				json.put("message", "Element or path not found");
-				rc.end(Buffer.newInstance(json.toBuffer()));
-				return;
-			}
 			// Handle REST errors
 			Throwable failure = rc.failure();
 			if (rc.failed() && failure != null && failure instanceof RESTException) {
@@ -90,10 +90,16 @@ public class ServerVerticle extends AbstractVerticle {
 				System.out.println("Error " + code + " in " + path);
 				JsonObject json = new JsonObject();
 				json.put("message", restFailure.message());
-				rc.response().setStatusCode(code);
-				rc.end(Buffer.newInstance(json.toBuffer()));
+				sendJson(rc, code, json);
 				return;
 			}
+
+			// Handle common 404 errors
+			if (rc.statusCode() == 404) {
+				sendMessage(rc, 404, "Path not found");
+				return;
+			}
+
 			// Fallback to default handler
 			rc.next();
 		});
@@ -113,12 +119,19 @@ public class ServerVerticle extends AbstractVerticle {
 
 	private void addUserCrud(Router router) {
 		router.route("/users").method(POST).handler(userHandler::create);
-		router.route("/users/:uuid").method(GET).handler(groupHandler::read);
-		router.route("/users/:uuid").method(DELETE).handler(groupHandler::delete);
+		router.route("/users/:uuid").method(GET).handler(userHandler::read);
+		router.route("/users/:uuid").method(DELETE).handler(userHandler::delete);
 		router.route("/users").method(GET).handler(userHandler::list);
 
 		// Method added just to ease testing
-		router.route("/addUser").method(GET).handler(userHandler::create);
+		router.route("/addUser").method(GET)
+			.handler(rc -> {
+				JsonObject json = new JsonObject();
+				json.put("username", "joedoe");
+				rc.setBody(Buffer.newInstance(json.toBuffer()));
+				rc.next();
+			})
+			.handler(userHandler::create);
 
 	}
 

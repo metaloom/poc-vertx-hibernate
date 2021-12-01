@@ -1,6 +1,7 @@
 package io.metaloom.poc.db;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Maybe;
@@ -13,9 +14,10 @@ public interface PocUserDao {
 	 * Create and store a new user with the given username.
 	 * 
 	 * @param username
+	 * @param modifier Modifier for the user that should be created
 	 * @return
 	 */
-	Single<? extends PocUser> createUser(String username);
+	Single<? extends PocUser> createUser(String username, Consumer<PocUser> modifier);
 
 	/**
 	 * Load the user with the given uuid.

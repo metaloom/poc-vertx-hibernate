@@ -13,12 +13,19 @@ import io.metaloom.poc.option.DatabaseOption;
 @Module
 public class HibernateModule {
 
+	public static final int DEFAULT_POOL_SIZE = 32;
+
 	@Provides
 	@Singleton
 	public SessionFactory sessionFactory(PocPostgreSQLContainer container) {
 		container.start();
-		DatabaseOption dbOptions = container.getOptions();
-		SessionFactory factory = HibernateUtil.sessionFactory(dbOptions.getJdbcUrl(), dbOptions.getUsername(), dbOptions.getPassword(), false)
+		DatabaseOption options = container.getOptions();
+		boolean logging = false;
+		int poolSize = DEFAULT_POOL_SIZE;
+		String jdbcUrl = options.getJdbcUrl();
+		String user = options.getUsername();
+		String pass = options.getPassword();
+		SessionFactory factory = HibernateUtil.sessionFactory(jdbcUrl, user, pass, logging, poolSize)
 			.unwrap(SessionFactory.class);
 
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {

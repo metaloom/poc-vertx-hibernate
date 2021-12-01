@@ -7,7 +7,6 @@ import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 
-
 public interface PocGroupDao {
 
 	/**
@@ -74,5 +73,12 @@ public interface PocGroupDao {
 	 * @return
 	 */
 	Observable<PocUser> addTwoUsers();
+
+	/**
+	 * Load all stored groups.
+	 * 
+	 * @return
+	 */
+	Observable<? extends PocGroup> loadGroups();
 
 }

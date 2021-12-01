@@ -1,5 +1,6 @@
 package io.metaloom.poc.db;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.hibernate.reactive.session.impl.ReactiveSessionFactoryImpl;
@@ -20,7 +21,7 @@ public class UserDaoTest extends AbstractDaoTest {
 	public void setupHibernate() {
 		DatabaseOption options = container.getOptions();
 		ReactiveSessionFactoryImpl rxFactory = (ReactiveSessionFactoryImpl) HibernateUtil.sessionFactory(options.getJdbcUrl(), options.getUsername(),
-			options.getPassword(), true);
+			options.getPassword(), true, 4);
 		factory = rxFactory.unwrap(SessionFactory.class);
 	}
 
@@ -34,8 +35,12 @@ public class UserDaoTest extends AbstractDaoTest {
 	@Test
 	public void testUserDao() {
 		PocUserDao userDao = new PocUserDaoImpl(factory);
-		PocUser user1 = userDao.createUser("Iain M. Banks").blockingGet();
+		PocUser user1 = userDao.createUser("Iain M. Banks", user -> {
+			user.setEmail("ABCD");
+		}).blockingGet();
+
 		assertNotNull(user1);
+		assertEquals("ABCD", user1.getEmail());
 		// PocUser user2 = new PocUserImpl("Neal Stephenson");
 		// PocUser user3 = new PocUserImpl("Arthur C. Clarke");
 		// groupDao.addUserToGroup(group1, user1);

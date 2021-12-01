@@ -1,5 +1,8 @@
 package io.metaloom.poc.server;
 
+import io.reactivex.rxjava3.core.Maybe;
+import io.reactivex.rxjava3.core.MaybeSource;
+
 public class RESTException extends Exception {
 
 	private static final long serialVersionUID = 2851476111189913616L;
@@ -27,5 +30,9 @@ public class RESTException extends Exception {
 
 	public static RESTException create(int code) {
 		return new RESTException(code);
+	}
+
+	public static <T> MaybeSource<T> createMaybe(int code) {
+		return Maybe.error(create(code));
 	}
 }

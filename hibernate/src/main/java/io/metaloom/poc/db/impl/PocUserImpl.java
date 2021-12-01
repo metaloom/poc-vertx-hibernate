@@ -112,7 +112,7 @@ public class PocUserImpl extends AbstractElement implements PocUser {
 	@Override
 	public JsonObject toJson() {
 		JsonObject json = new JsonObject();
-		json.put("uuid", getUuid());
+		json.put("uuid", getUuid().toString());
 		json.put("username", getUsername());
 		json.put("firstname", getFirstname());
 		json.put("lastname", getLastname());

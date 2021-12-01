@@ -1,9 +1,12 @@
 package io.metaloom.poc.db.impl;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletionStage;
 
 import javax.inject.Inject;
 
+import org.hibernate.reactive.stage.Stage.Query;
 import org.hibernate.reactive.stage.Stage.SessionFactory;
 
 import io.metaloom.poc.db.PocGroup;
@@ -67,6 +70,18 @@ public class PocGroupDaoImpl extends AbstractDao implements PocGroupDao {
 	public Observable<PocUser> addTwoUsers() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public Observable<? extends PocGroup> loadGroups() {
+		CompletionStage<List<PocGroupImpl>> stage = factory.withSession(session -> {
+			Query<PocGroupImpl> q = session.createQuery("from PocGroupImpl", PocGroupImpl.class);
+			CompletionStage<List<PocGroupImpl>> list = q.getResultList();
+			return list;
+		});
+		return Single.fromCompletionStage(stage).flatMapObservable(list -> {
+			return Observable.fromIterable(list);
+		});
 	}
 
 }

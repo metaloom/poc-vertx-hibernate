@@ -3,6 +3,7 @@ package io.metaloom.poc.db.impl;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletionStage;
+import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
@@ -24,14 +25,19 @@ public class PocUserDaoImpl extends AbstractDao implements PocUserDao {
 	}
 
 	@Override
-	public Single<? extends PocUser> createUser(String username) {
-		if (username == null) {
-			return Single.error(new NullPointerException("Username must be set"));
-		}
-		PocUser user = new PocUserImpl(username);
-		CompletionStage<Void> stage = factory.withTransaction((session, tx) -> session.persist(user));
-		Completable c = Completable.fromCompletionStage(stage);
-		return c.toSingle(() -> user);
+	public Single<? extends PocUser> createUser(String username, Consumer<PocUser> modifier) {
+		return Single.defer(() -> {
+			if (username == null) {
+				return Single.error(new NullPointerException("Username must be set"));
+			}
+			PocUser user = new PocUserImpl(username);
+			if (modifier != null) {
+				modifier.accept(user);
+			}
+			CompletionStage<Void> stage = factory.withTransaction((session, tx) -> session.persist(user));
+			Completable c = Completable.fromCompletionStage(stage);
+			return c.toSingle(() -> user);
+		});
 	}
 
 	@Override

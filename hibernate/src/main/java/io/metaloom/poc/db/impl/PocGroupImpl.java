@@ -52,7 +52,7 @@ public class PocGroupImpl extends AbstractElement implements PocGroup {
 	@Override
 	public JsonObject toJson() {
 		JsonObject json = new JsonObject();
-		json.put("uuid", getUuid());
+		json.put("uuid", getUuid().toString());
 		json.put("name", getName());
 		return json;
 	}

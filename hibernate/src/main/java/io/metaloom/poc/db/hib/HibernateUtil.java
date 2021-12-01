@@ -18,7 +18,7 @@ public final class HibernateUtil {
 
 	}
 
-	public static SessionFactory sessionFactory(String url, String user, String pass, boolean logEnabled) {
+	public static SessionFactory sessionFactory(String url, String user, String pass, boolean logEnabled, int poolSize) {
 		Configuration configuration = new Configuration();
 		Properties settings = new Properties();
 
@@ -26,7 +26,7 @@ public final class HibernateUtil {
 		settings.put(Environment.URL, url);
 		settings.put(Environment.USER, user);
 		settings.put(Environment.PASS, pass);
-		settings.put(Environment.POOL_SIZE, "10");
+		settings.put(Environment.POOL_SIZE, poolSize);
 
 		// Logging
 		if (logEnabled) {
