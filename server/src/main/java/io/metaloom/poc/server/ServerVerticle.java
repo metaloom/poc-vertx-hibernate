@@ -1,61 +1,45 @@
 package io.metaloom.poc.server;
 
+import static io.vertx.core.http.HttpMethod.DELETE;
 import static io.vertx.core.http.HttpMethod.GET;
 import static io.vertx.core.http.HttpMethod.POST;
 
-import java.util.concurrent.atomic.AtomicLong;
-
-import org.hibernate.reactive.stage.Stage.SessionFactory;
+import javax.inject.Inject;
+import javax.inject.Provider;
 
 import io.metaloom.poc.db.PocGroupDao;
-import io.metaloom.poc.db.PocUser;
-import io.metaloom.poc.db.PocUserDao;
-import io.metaloom.poc.db.impl.PocGroupDaoImpl;
-import io.metaloom.poc.db.impl.PocUserDaoImpl;
-import io.vertx.core.AbstractVerticle;
+import io.metaloom.poc.server.crud.CrudHandler;
+import io.metaloom.poc.server.crud.impl.GroupCrudHandler;
+import io.metaloom.poc.server.crud.impl.UserCrudHandler;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpServer;
-import io.vertx.core.http.HttpServerOptions;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.web.Router;
-import io.vertx.ext.web.RoutingContext;
+import io.vertx.rxjava3.core.AbstractVerticle;
+import io.vertx.rxjava3.core.buffer.Buffer;
+import io.vertx.rxjava3.ext.web.Router;
 
 public class ServerVerticle extends AbstractVerticle {
 
-	public static final int SERVER_PORT = 8080;
-	public static final String SERVER_HOST = "localhost";
-
 	public static final int MAX_RANGE = 5000;
 
-	public HttpServer server;
-	private SessionFactory factory;
-	private PocUserDao userDao;
-	private PocGroupDao groupDao;
+	private final HttpServer rxHttpServer;
+	private final CrudHandler groupHandler;
+	private final CrudHandler userHandler;
 
-	public ServerVerticle(SessionFactory factory) {
-		this.factory = factory;
-		this.userDao = new PocUserDaoImpl(factory);
-		this.groupDao = new PocGroupDaoImpl(factory);
+	@Inject
+	public ServerVerticle(Provider<HttpServer> rxHttpServerProvider, UserCrudHandler userCrudHandler, GroupCrudHandler groupCrudHandler,
+		PocGroupDao groupDao) {
+		this.rxHttpServer = rxHttpServerProvider.get();
+		this.userHandler = userCrudHandler;
+		this.groupHandler = groupCrudHandler;
 	}
 
 	@Override
 	public void start(Promise<Void> startPromise) throws Exception {
-		HttpServerOptions options = new HttpServerOptions();
-		options
-			.setPort(SERVER_PORT)
-			.setHost(SERVER_HOST)
-			.setCompressionSupported(true)
-			.setHandle100ContinueAutomatically(true)
-			.setTcpFastOpen(true)
-			.setTcpNoDelay(true)
-			.setTcpQuickAck(true);
-
-		server = vertx.createHttpServer(options);
 		Router router = createRouter();
 
-		server.requestHandler(router::handle);
-		server.listen(lh -> {
+		rxHttpServer.requestHandler(router.getDelegate()::handle);
+		rxHttpServer.listen(lh -> {
 			if (lh.failed()) {
 				startPromise.fail(lh.cause());
 			} else {
@@ -67,8 +51,8 @@ public class ServerVerticle extends AbstractVerticle {
 
 	@Override
 	public void stop(Promise<Void> stopPromise) throws Exception {
-		if (server != null) {
-			server.close(ch -> {
+		if (rxHttpServer != null) {
+			rxHttpServer.close(ch -> {
 				if (ch.failed()) {
 					stopPromise.fail(ch.cause());
 				} else {
@@ -78,46 +62,64 @@ public class ServerVerticle extends AbstractVerticle {
 		}
 	}
 
-	AtomicLong count = new AtomicLong(0);
-
 	private Router createRouter() {
 		Router router = Router.router(vertx);
 
-		router.route("/users").method(POST).handler(rc -> {
-			addUser(rc);
-		});
-
-		router.route("/addUser").method(GET).handler(rc -> {
-			addUser(rc);
-		});
-
-		router.route("/users").method(GET).handler(rc -> {
-			listUsers(rc);
-		});
+		addFailureHandler(router);
+		addUserCrud(router);
+		addGroupCrud(router);
 
 		return router;
 	}
 
-	private void addUser(RoutingContext rc) {
-		userDao.createUser("user_" + count.incrementAndGet()).subscribe(u -> {
-			rc.end("Added " + u.getUuid());
-		}, err -> {
-			rc.fail(err);
+	private void addFailureHandler(Router router) {
+		router.route().failureHandler(rc -> {
+			// Handle common 404 errors
+			if (rc.statusCode() == 404) {
+				JsonObject json = new JsonObject();
+				json.put("message", "Element or path not found");
+				rc.end(Buffer.newInstance(json.toBuffer()));
+				return;
+			}
+			// Handle REST errors
+			Throwable failure = rc.failure();
+			if (rc.failed() && failure != null && failure instanceof RESTException) {
+				RESTException restFailure = (RESTException) failure;
+				int code = restFailure.code();
+				String path = rc.normalizedPath();
+				System.out.println("Error " + code + " in " + path);
+				JsonObject json = new JsonObject();
+				json.put("message", restFailure.message());
+				rc.response().setStatusCode(code);
+				rc.end(Buffer.newInstance(json.toBuffer()));
+				return;
+			}
+			// Fallback to default handler
+			rc.next();
 		});
+
 	}
 
-	private void listUsers(RoutingContext rc) {
-		userDao.loadUsers().toList().subscribe(list -> {
-			JsonObject json = new JsonObject();
-			JsonArray users = new JsonArray();
-			for (PocUser user : list) {
-				users.add(user.getUuid().toString());
-			}
-			json.put("users", users);
-			rc.end(json.toBuffer());
-		}, err -> {
-			rc.fail(err);
-		});
+	private void addGroupCrud(Router router) {
+		router.route("/groups").method(POST).handler(groupHandler::create);
+		router.route("/groups/:uuid").method(GET).handler(groupHandler::read);
+		router.route("/groups/:uuid").method(DELETE).handler(groupHandler::delete);
+		router.route("/groups").method(GET).handler(groupHandler::list);
+
+		// Method added just to ease testing
+		router.route("/addGroup").method(GET).handler(groupHandler::create);
+
+	}
+
+	private void addUserCrud(Router router) {
+		router.route("/users").method(POST).handler(userHandler::create);
+		router.route("/users/:uuid").method(GET).handler(groupHandler::read);
+		router.route("/users/:uuid").method(DELETE).handler(groupHandler::delete);
+		router.route("/users").method(GET).handler(userHandler::list);
+
+		// Method added just to ease testing
+		router.route("/addUser").method(GET).handler(userHandler::create);
+
 	}
 
 }

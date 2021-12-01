@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletionStage;
 
+import javax.inject.Inject;
+
 import org.hibernate.reactive.stage.Stage.Query;
 import org.hibernate.reactive.stage.Stage.SessionFactory;
 
@@ -16,6 +18,7 @@ import io.reactivex.rxjava3.core.Single;
 
 public class PocUserDaoImpl extends AbstractDao implements PocUserDao {
 
+	@Inject
 	public PocUserDaoImpl(SessionFactory factory) {
 		super(factory);
 	}

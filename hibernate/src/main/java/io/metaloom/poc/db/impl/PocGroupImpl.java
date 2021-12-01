@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import io.metaloom.poc.db.PocGroup;
+import io.vertx.core.json.JsonObject;
 
 @Entity
 @Table(name = "groups")
@@ -46,6 +47,14 @@ public class PocGroupImpl extends AbstractElement implements PocGroup {
 	@Override
 	public int hashCode() {
 		return getUuid().hashCode();
+	}
+
+	@Override
+	public JsonObject toJson() {
+		JsonObject json = new JsonObject();
+		json.put("uuid", getUuid());
+		json.put("name", getName());
+		return json;
 	}
 
 }

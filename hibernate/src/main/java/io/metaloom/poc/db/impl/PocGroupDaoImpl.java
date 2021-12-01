@@ -2,6 +2,8 @@ package io.metaloom.poc.db.impl;
 
 import java.util.UUID;
 
+import javax.inject.Inject;
+
 import org.hibernate.reactive.stage.Stage.SessionFactory;
 
 import io.metaloom.poc.db.PocGroup;
@@ -14,6 +16,7 @@ import io.reactivex.rxjava3.core.Single;
 
 public class PocGroupDaoImpl extends AbstractDao implements PocGroupDao {
 
+	@Inject
 	public PocGroupDaoImpl(SessionFactory factory) {
 		super(factory);
 	}

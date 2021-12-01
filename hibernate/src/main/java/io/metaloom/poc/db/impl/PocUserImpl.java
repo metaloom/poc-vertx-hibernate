@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import io.metaloom.poc.db.PocUser;
+import io.vertx.core.json.JsonObject;
 
 @Entity
 @Table(name = "users")
@@ -106,6 +107,17 @@ public class PocUserImpl extends AbstractElement implements PocUser {
 	public PocUser setLastname(String lastname) {
 		this.lastname = lastname;
 		return this;
+	}
+
+	@Override
+	public JsonObject toJson() {
+		JsonObject json = new JsonObject();
+		json.put("uuid", getUuid());
+		json.put("username", getUsername());
+		json.put("firstname", getFirstname());
+		json.put("lastname", getLastname());
+		json.put("email", getEmail());
+		return json;
 	}
 
 }

@@ -1,5 +1,7 @@
 package io.metaloom.poc.db;
 
+import static org.junit.Assert.assertNotNull;
+
 import org.hibernate.reactive.session.impl.ReactiveSessionFactoryImpl;
 import org.hibernate.reactive.stage.Stage.SessionFactory;
 import org.junit.After;
@@ -8,7 +10,7 @@ import org.junit.Test;
 
 import io.metaloom.poc.db.hib.HibernateUtil;
 import io.metaloom.poc.db.impl.PocUserDaoImpl;
-import io.metaloom.poc.option.DatabaseOptions;
+import io.metaloom.poc.option.DatabaseOption;
 
 public class UserDaoTest extends AbstractDaoTest {
 
@@ -16,7 +18,7 @@ public class UserDaoTest extends AbstractDaoTest {
 
 	@Before
 	public void setupHibernate() {
-		DatabaseOptions options = container.getOptions();
+		DatabaseOption options = container.getOptions();
 		ReactiveSessionFactoryImpl rxFactory = (ReactiveSessionFactoryImpl) HibernateUtil.sessionFactory(options.getJdbcUrl(), options.getUsername(),
 			options.getPassword(), true);
 		factory = rxFactory.unwrap(SessionFactory.class);
@@ -33,6 +35,7 @@ public class UserDaoTest extends AbstractDaoTest {
 	public void testUserDao() {
 		PocUserDao userDao = new PocUserDaoImpl(factory);
 		PocUser user1 = userDao.createUser("Iain M. Banks").blockingGet();
+		assertNotNull(user1);
 		// PocUser user2 = new PocUserImpl("Neal Stephenson");
 		// PocUser user3 = new PocUserImpl("Arthur C. Clarke");
 		// groupDao.addUserToGroup(group1, user1);

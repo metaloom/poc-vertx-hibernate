@@ -1,6 +1,6 @@
 package io.metaloom.poc.option;
 
-public class DatabaseOptions {
+public class DatabaseOption {
 
 	public static final String DEFAULT_HOST = "127.0.0.1";
 
@@ -30,7 +30,7 @@ public class DatabaseOptions {
 		return host;
 	}
 
-	public DatabaseOptions setHost(String host) {
+	public DatabaseOption setHost(String host) {
 		this.host = host;
 		return this;
 	}
@@ -39,7 +39,7 @@ public class DatabaseOptions {
 		return port;
 	}
 
-	public DatabaseOptions setPort(int port) {
+	public DatabaseOption setPort(int port) {
 		this.port = port;
 		return this;
 	}
@@ -48,7 +48,7 @@ public class DatabaseOptions {
 		return databaseName;
 	}
 
-	public DatabaseOptions setDatabaseName(String databaseName) {
+	public DatabaseOption setDatabaseName(String databaseName) {
 		this.databaseName = databaseName;
 		return this;
 	}
@@ -57,7 +57,7 @@ public class DatabaseOptions {
 		return password;
 	}
 
-	public DatabaseOptions setPassword(String password) {
+	public DatabaseOption setPassword(String password) {
 		this.password = password;
 		return this;
 	}
@@ -66,7 +66,7 @@ public class DatabaseOptions {
 		return username;
 	}
 
-	public DatabaseOptions setUsername(String username) {
+	public DatabaseOption setUsername(String username) {
 		this.username = username;
 		return this;
 	}
@@ -75,7 +75,7 @@ public class DatabaseOptions {
 		return jdbcUrl;
 	}
 
-	public DatabaseOptions setJDBCUrl(String jdbcUrl) {
+	public DatabaseOption setJDBCUrl(String jdbcUrl) {
 		this.jdbcUrl = jdbcUrl;
 		return this;
 	}

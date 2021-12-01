@@ -2,7 +2,7 @@ package io.metaloom.poc.env;
 
 import org.testcontainers.containers.PostgreSQLContainer;
 
-import io.metaloom.poc.option.DatabaseOptions;
+import io.metaloom.poc.option.DatabaseOption;
 
 /**
  * Preconfigured {@link PocPostgreSQLContainer}
@@ -22,8 +22,8 @@ public class PocPostgreSQLContainer extends PostgreSQLContainer<PocPostgreSQLCon
 		return getFirstMappedPort();
 	}
 
-	public DatabaseOptions getOptions() {
-		DatabaseOptions options = new DatabaseOptions();
+	public DatabaseOption getOptions() {
+		DatabaseOption options = new DatabaseOption();
 		options.setPort(getPort());
 		options.setHost(getContainerIpAddress());
 		options.setUsername(getUsername());

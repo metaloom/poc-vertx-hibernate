@@ -54,6 +54,13 @@
 			<artifactId>vertx-pg-client</artifactId>
 			<groupId>io.vertx</groupId>
 		</dependency>
+		
+		<!-- Dagger -->
+		<dependency>
+			<groupId>com.google.dagger</groupId>
+			<artifactId>dagger-compiler</artifactId>
+			<optional>true</optional>
+		</dependency>
 
 		<!-- Container support -->
 		<dependency>

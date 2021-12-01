@@ -5,7 +5,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import io.metaloom.poc.env.PocPostgreSQLContainer;
-import io.metaloom.poc.option.DatabaseOptions;
+import io.metaloom.poc.option.DatabaseOption;
 
 public class HibernateUtilTest {
 
@@ -14,7 +14,7 @@ public class HibernateUtilTest {
 
 	@Test
 	public void testCreateSessionFactory() {
-		DatabaseOptions options = container.getOptions();
+		DatabaseOption options = container.getOptions();
 		SessionFactory factory = HibernateUtil.sessionFactory(options.getJdbcUrl(), options.getUsername(), options.getPassword(), true);
 		System.out.println(factory.getClass().getName());
 	}
