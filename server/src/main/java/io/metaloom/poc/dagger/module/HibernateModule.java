@@ -13,7 +13,7 @@ import io.metaloom.poc.option.DatabaseOption;
 @Module
 public class HibernateModule {
 
-	public static final int DEFAULT_POOL_SIZE = 32;
+	public static final int DEFAULT_POOL_SIZE = 64;
 
 	@Provides
 	@Singleton
