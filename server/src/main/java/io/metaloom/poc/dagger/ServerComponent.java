@@ -8,6 +8,8 @@ import io.metaloom.poc.dagger.module.ContainerModule;
 import io.metaloom.poc.dagger.module.HibernateModule;
 import io.metaloom.poc.dagger.module.PocBindModule;
 import io.metaloom.poc.dagger.module.VertxModule;
+import io.metaloom.poc.db.PocGroupDao;
+import io.metaloom.poc.db.PocUserDao;
 import io.metaloom.poc.option.ServerOption;
 import io.metaloom.poc.server.RESTServer;
 
@@ -16,6 +18,10 @@ import io.metaloom.poc.server.RESTServer;
 public interface ServerComponent {
 
 	RESTServer restServer();
+
+	PocUserDao userDao();
+
+	PocGroupDao groupDao();
 
 	/**
 	 * Builder for the main dagger component.

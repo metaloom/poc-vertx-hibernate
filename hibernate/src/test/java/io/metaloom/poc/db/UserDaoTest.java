@@ -3,6 +3,8 @@ package io.metaloom.poc.db;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.UUID;
+
 import org.hibernate.reactive.session.impl.ReactiveSessionFactoryImpl;
 import org.hibernate.reactive.stage.Stage.SessionFactory;
 import org.junit.After;
@@ -10,12 +12,15 @@ import org.junit.Before;
 import org.junit.Test;
 
 import io.metaloom.poc.db.hib.HibernateUtil;
+import io.metaloom.poc.db.impl.PocGroupDaoImpl;
 import io.metaloom.poc.db.impl.PocUserDaoImpl;
 import io.metaloom.poc.option.DatabaseOption;
 
 public class UserDaoTest extends AbstractDaoTest {
 
 	private SessionFactory factory;
+	private PocUserDao userDao;
+	private PocGroupDao groupDao;
 
 	@Before
 	public void setupHibernate() {
@@ -23,6 +28,8 @@ public class UserDaoTest extends AbstractDaoTest {
 		ReactiveSessionFactoryImpl rxFactory = (ReactiveSessionFactoryImpl) HibernateUtil.sessionFactory(options.getJdbcUrl(), options.getUsername(),
 			options.getPassword(), true, 4);
 		factory = rxFactory.unwrap(SessionFactory.class);
+		userDao = new PocUserDaoImpl(factory);
+		groupDao = new PocGroupDaoImpl(factory);
 	}
 
 	@After
@@ -34,25 +41,28 @@ public class UserDaoTest extends AbstractDaoTest {
 
 	@Test
 	public void testUserDao() {
-		PocUserDao userDao = new PocUserDaoImpl(factory);
-		PocUser user1 = userDao.createUser("Iain M. Banks", user -> {
-			user.setEmail("ABCD");
+		PocUser user = userDao.createUser("Iain M. Banks", u -> {
+			u.setEmail("ABCD");
 		}).blockingGet();
 
-		assertNotNull(user1);
-		assertEquals("ABCD", user1.getEmail());
-		// PocUser user2 = new PocUserImpl("Neal Stephenson");
-		// PocUser user3 = new PocUserImpl("Arthur C. Clarke");
-		// groupDao.addUserToGroup(group1, user1);
-		// groupDao.addUserToGroup(group1, user2);
+		assertNotNull(user);
+		assertEquals("ABCD", user.getEmail());
 	}
 
-	// @Test
-	// public void testUserGroup() {
-	// PocGroupDao groupDao = new PocGroupDaoImpl(factory);
-	// PocGroup group1 = groupDao.createGroup("guests").blockingGet();
-	// PocGroup group2 = groupDao.createGroup("admins").blockingGet();
-	// PocGroup group3 = groupDao.createGroup("editors").blockingGet();
-	// }
+	@Test
+	public void testCreateWithUuid() {
+		String userUUID = "44dee6f7-879c-4c2b-89e1-462e19c99708";
+		PocUser user = userDao.createUser("Iain M. Banks", u -> {
+			u.setEmail("ABCD");
+			u.setUuid(UUID.fromString(userUUID));
+		}).blockingGet();
+		assertEquals(userUUID, user.getUuid().toString());
+	}
+
+	@Test
+	public void testUserGroup() {
+		PocGroup group = groupDao.createGroup("guests").blockingGet();
+		assertNotNull(group);
+	}
 
 }

@@ -29,7 +29,7 @@
 		<!-- Vert.x -->
 		<dependency>
 			<groupId>io.vertx</groupId>
-			<artifactId>vertx-web</artifactId>
+			<artifactId>vertx-core</artifactId>
 		</dependency>
 
 		<!-- Netty -->

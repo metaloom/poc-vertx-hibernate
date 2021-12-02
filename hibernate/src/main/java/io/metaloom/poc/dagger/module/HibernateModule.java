@@ -9,19 +9,18 @@ import dagger.Module;
 import io.metaloom.poc.db.hib.HibernateUtil;
 import io.metaloom.poc.env.PocPostgreSQLContainer;
 import io.metaloom.poc.option.DatabaseOption;
+import io.metaloom.poc.option.ServerOption;
 
 @Module
 public class HibernateModule {
 
-	public static final int DEFAULT_POOL_SIZE = 64;
-
 	@Provides
 	@Singleton
-	public SessionFactory sessionFactory(PocPostgreSQLContainer container) {
+	public SessionFactory sessionFactory(PocPostgreSQLContainer container, ServerOption serverOptions) {
 		container.start();
 		DatabaseOption options = container.getOptions();
 		boolean logging = false;
-		int poolSize = DEFAULT_POOL_SIZE;
+		int poolSize = serverOptions.getHibernatePoolSize();
 		String jdbcUrl = options.getJdbcUrl();
 		String user = options.getUsername();
 		String pass = options.getPassword();

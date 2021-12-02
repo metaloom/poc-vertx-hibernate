@@ -1,3 +1,4 @@
+
 package io.metaloom.poc.hibernate;
 
 import static java.lang.System.out;

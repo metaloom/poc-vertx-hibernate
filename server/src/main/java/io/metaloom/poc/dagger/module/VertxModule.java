@@ -36,8 +36,6 @@ public class VertxModule {
 			System.out.println("Native transports have been enabled.");
 		} else {
 			System.err.println("Native transports have not been enabled. Maybe you are not running this on x86_64 linux");
-			System.err.println("Stopping server..");
-			System.exit(10);
 		}
 
 		return vertx;

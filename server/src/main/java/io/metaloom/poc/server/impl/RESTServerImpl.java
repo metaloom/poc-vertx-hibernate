@@ -3,6 +3,7 @@ package io.metaloom.poc.server.impl;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import io.metaloom.poc.option.ServerOption;
 import io.metaloom.poc.server.RESTServer;
 import io.metaloom.poc.server.ServerVerticle;
 import io.reactivex.rxjava3.core.Completable;
@@ -11,19 +12,25 @@ import io.vertx.rxjava3.core.Vertx;
 
 public class RESTServerImpl implements RESTServer {
 
-
 	private Vertx rxVertx;
 	private Provider<ServerVerticle> verticleProvider;
+	private ServerOption options;
 
 	@Inject
-	public RESTServerImpl(Vertx rxVertx, Provider<ServerVerticle> verticleProvider) {
+	public RESTServerImpl(Vertx rxVertx, Provider<ServerVerticle> verticleProvider, ServerOption options) {
 		this.rxVertx = rxVertx;
 		this.verticleProvider = verticleProvider;
+		this.options = options;
 	}
 
 	@Override
 	public Completable start() {
-		int nVerticles = Runtime.getRuntime().availableProcessors() * 2;
+		int nVerticles = 1;
+		if (options.getVerticleCount() == null) {
+			nVerticles = Runtime.getRuntime().availableProcessors() * 2;
+		} else {
+			nVerticles = options.getVerticleCount();
+		}
 
 		System.out.println("Deploying {" + nVerticles + "} verticles");
 		return Observable.range(0, nVerticles).flatMapCompletable(n -> {
