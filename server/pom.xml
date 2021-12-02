@@ -37,7 +37,7 @@
 		</dependency>
 		<dependency>
 			<groupId>io.metaloom.poc</groupId>
-			<artifactId>poc-vertx-hibernate-hib</artifactId>
+			<artifactId>poc-vertx-hibernate-rest</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -45,10 +45,6 @@
 		</dependency>
 
 		<!-- Extra -->
-		<dependency>
-			<groupId>io.vertx</groupId>
-			<artifactId>vertx-rx-java3</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>com.google.dagger</groupId>
 			<artifactId>dagger-compiler</artifactId>
