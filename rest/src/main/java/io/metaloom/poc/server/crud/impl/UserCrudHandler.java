@@ -40,6 +40,8 @@ public class UserCrudHandler implements CrudHandler {
 		}
 
 		userDao.createUser(username, user -> {
+			user.setUuid(UUID.randomUUID());
+
 			if (email != null) {
 				user.setEmail(email);
 			}

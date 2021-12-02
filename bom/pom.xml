@@ -18,6 +18,7 @@
 		<vertx.version>4.2.1</vertx.version>
 		<hibernate.orm.version>5.6.1.Final</hibernate.orm.version>
 		<hibernate.reactive.version>1.1.0.Final</hibernate.reactive.version>
+		<logback-classic.version>1.2.6</logback-classic.version>
 		<log4j.version>2.11.2</log4j.version>
 	</properties>
 
@@ -189,6 +190,11 @@
 				<groupId>org.apache.logging.log4j</groupId>
 				<artifactId>log4j-slf4j18-impl</artifactId>
 				<version>${log4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>${logback-classic.version}</version>
 			</dependency>
 
 			<dependency>

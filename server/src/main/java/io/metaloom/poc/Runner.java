@@ -14,14 +14,16 @@ public class Runner {
 	public static void main(String[] args) {
 		ServerOption options = new ServerOption();
 		options.setPort(8888);
-		options.setVerticleCount(4);
-		options.setHibernatePoolSize(10);
+		options.setVerticleCount(8);
+		options.setHibernatePoolSize(16);
 
 		// Inject the options and build the dagger dependency graph
 		ServerComponent serverComponent = DaggerServerComponent
 			.builder()
 			.configuration(options)
 			.build();
+
+		serverComponent.container().start();
 
 		// Create initial test data
 		serverComponent.userDao().createUser("joedoe", user -> {

@@ -44,6 +44,12 @@
 			<artifactId>junit</artifactId>
 		</dependency>
 
+		<!-- Logging -->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+		</dependency>
+
 		<!-- Extra -->
 		<dependency>
 			<groupId>com.google.dagger</groupId>

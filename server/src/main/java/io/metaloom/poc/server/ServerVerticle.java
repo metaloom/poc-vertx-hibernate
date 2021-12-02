@@ -9,64 +9,72 @@ import static io.vertx.core.http.HttpMethod.POST;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import io.metaloom.poc.db.PocGroupDao;
+import org.hibernate.reactive.stage.Stage;
+import org.hibernate.reactive.stage.Stage.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.metaloom.poc.db.impl.PocGroupDaoImpl;
+import io.metaloom.poc.db.impl.PocUserDaoImpl;
 import io.metaloom.poc.server.crud.CrudHandler;
 import io.metaloom.poc.server.crud.impl.GroupCrudHandler;
 import io.metaloom.poc.server.crud.impl.UserCrudHandler;
-import io.vertx.core.Promise;
-import io.vertx.core.http.HttpServer;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Single;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava3.core.AbstractVerticle;
+import io.vertx.rxjava3.core.RxHelper;
 import io.vertx.rxjava3.core.buffer.Buffer;
+import io.vertx.rxjava3.core.http.HttpServer;
 import io.vertx.rxjava3.ext.web.Router;
 import io.vertx.rxjava3.ext.web.handler.BodyHandler;
 
 public class ServerVerticle extends AbstractVerticle {
 
+	private static final Logger logger = LoggerFactory.getLogger(ServerVerticle.class);
+
 	public static final int MAX_RANGE = 5000;
 
 	private final HttpServer rxHttpServer;
-	private final CrudHandler groupHandler;
-	private final CrudHandler userHandler;
+	private CrudHandler groupHandler;
+	private CrudHandler userHandler;
+
+	private Provider<SessionFactory> emfProvider;
 
 	@Inject
-	public ServerVerticle(Provider<HttpServer> rxHttpServerProvider, UserCrudHandler userCrudHandler, GroupCrudHandler groupCrudHandler,
-		PocGroupDao groupDao) {
+	public ServerVerticle(Provider<HttpServer> rxHttpServerProvider, Provider<SessionFactory> emfProvider) {
 		this.rxHttpServer = rxHttpServerProvider.get();
-		this.userHandler = userCrudHandler;
-		this.groupHandler = groupCrudHandler;
+		this.emfProvider = emfProvider;
 	}
 
 	@Override
-	public void start(Promise<Void> startPromise) throws Exception {
-		Router router = createRouter();
-
-		rxHttpServer.requestHandler(router.getDelegate()::handle);
-		rxHttpServer.listen(lh -> {
-			if (lh.failed()) {
-				startPromise.fail(lh.cause());
-			} else {
-				System.out.println("Server started..");
-				startPromise.complete();
-			}
-		});
-	}
-
-	@Override
-	public void stop(Promise<Void> stopPromise) throws Exception {
-		if (rxHttpServer != null) {
-			rxHttpServer.close(ch -> {
-				if (ch.failed()) {
-					stopPromise.fail(ch.cause());
-				} else {
-					stopPromise.complete();
-				}
-			});
-		}
-	}
-
-	private Router createRouter() {
+	public Completable rxStart() {
 		Router router = Router.router(vertx);
+		Single<Stage.SessionFactory> startHibernate = Single.fromCallable(emfProvider::get)
+			.subscribeOn(RxHelper.blockingScheduler(vertx))
+			.doOnSuccess(e -> {
+				this.userHandler = new UserCrudHandler(new PocUserDaoImpl(e));
+				this.groupHandler = new GroupCrudHandler(new PocGroupDaoImpl(e));
+				setupRouter(router);
+				logger.info("✅ Hibernate Reactive is ready");
+			});
+
+		rxHttpServer.requestHandler(router::handle);
+		Single<HttpServer> startHttpServer = rxHttpServer.rxListen()
+			.doOnSubscribe(s -> {
+				logger.info("✅ Server started..");
+			});
+
+		return Observable.merge(startHibernate.toObservable(), startHttpServer.toObservable()).ignoreElements();
+	}
+
+	@Override
+	public Completable rxStop() {
+		return rxHttpServer.rxClose();
+	}
+
+	private void setupRouter(Router router) {
 
 		// Internal handlers
 		router.route().handler(BodyHandler.create());
@@ -75,8 +83,6 @@ public class ServerVerticle extends AbstractVerticle {
 		// Exposed routes
 		addUserCrud(router);
 		addGroupCrud(router);
-
-		return router;
 	}
 
 	private void addFailureHandler(Router router) {

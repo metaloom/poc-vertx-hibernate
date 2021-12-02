@@ -10,6 +10,7 @@ import io.metaloom.poc.dagger.module.PocBindModule;
 import io.metaloom.poc.dagger.module.VertxModule;
 import io.metaloom.poc.db.PocGroupDao;
 import io.metaloom.poc.db.PocUserDao;
+import io.metaloom.poc.env.PocPostgreSQLContainer;
 import io.metaloom.poc.option.ServerOption;
 import io.metaloom.poc.server.RESTServer;
 
@@ -22,6 +23,8 @@ public interface ServerComponent {
 	PocUserDao userDao();
 
 	PocGroupDao groupDao();
+
+	PocPostgreSQLContainer container();
 
 	/**
 	 * Builder for the main dagger component.

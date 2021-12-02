@@ -34,7 +34,9 @@ public class PocUserDaoImpl extends AbstractDao implements PocUserDao {
 			if (modifier != null) {
 				modifier.accept(user);
 			}
-			CompletionStage<Void> stage = factory.withTransaction((session, tx) -> session.persist(user));
+			CompletionStage<Void> stage = factory.withSession(session -> session.persist(user).thenCompose(r ->  {
+				return session.flush();
+			}));
 			Completable c = Completable.fromCompletionStage(stage);
 			return c.toSingle(() -> user);
 		});

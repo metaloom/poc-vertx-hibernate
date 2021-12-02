@@ -78,18 +78,6 @@ The server requires a postgres database. By default this database will be provid
 
 A few issues within the PoC still need solving. 
 
-### Thread usage
-
-Under load the `GET /users` endpoint fails:
-
-```
-Caused by: org.hibernate.HibernateException: java.lang.IllegalStateException: HR000069: Detected use of the reactive Session from a different Thread than the one which was used to open the reactive Session - this suggests an invalid integration; original thread: 'vert.x-eventloop-thread-4' current Thread: 'vert.x-eventloop-thread-13'
-```
-
-```bash
-wrk -d 2000 -c 20  http://localhost:8888/users
-```
-
 ### Closing of sessions
 
 When exceeding concurrent requests on reading a user row the session manager throws `Session/EntityManager is closed` errors.
