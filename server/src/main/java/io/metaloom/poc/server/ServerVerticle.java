@@ -9,7 +9,6 @@ import static io.vertx.core.http.HttpMethod.POST;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.hibernate.reactive.stage.Stage;
 import org.hibernate.reactive.stage.Stage.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,11 +19,8 @@ import io.metaloom.poc.server.crud.CrudHandler;
 import io.metaloom.poc.server.crud.impl.GroupCrudHandler;
 import io.metaloom.poc.server.crud.impl.UserCrudHandler;
 import io.reactivex.rxjava3.core.Completable;
-import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.core.Single;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava3.core.AbstractVerticle;
-import io.vertx.rxjava3.core.RxHelper;
 import io.vertx.rxjava3.core.buffer.Buffer;
 import io.vertx.rxjava3.core.http.HttpServer;
 import io.vertx.rxjava3.ext.web.Router;
@@ -34,44 +30,39 @@ public class ServerVerticle extends AbstractVerticle {
 
 	private static final Logger logger = LoggerFactory.getLogger(ServerVerticle.class);
 
-	public static final int MAX_RANGE = 5000;
-
 	private final HttpServer rxHttpServer;
-	private CrudHandler groupHandler;
-	private CrudHandler userHandler;
-
-	private Provider<SessionFactory> emfProvider;
+	private final SessionFactory emf;
+	private final CrudHandler groupHandler;
+	private final CrudHandler userHandler;
 
 	@Inject
-	public ServerVerticle(Provider<HttpServer> rxHttpServerProvider, Provider<SessionFactory> emfProvider) {
+	public ServerVerticle(Provider<HttpServer> rxHttpServerProvider, SessionFactory emf, UserCrudHandler userHandler, GroupCrudHandler groupHandler) {
 		this.rxHttpServer = rxHttpServerProvider.get();
-		this.emfProvider = emfProvider;
+		this.emf = emf;
+		this.userHandler = userHandler;
+		this.groupHandler = groupHandler;
 	}
 
 	@Override
 	public Completable rxStart() {
 		Router router = Router.router(vertx);
-		Single<Stage.SessionFactory> startHibernate = Single.fromCallable(emfProvider::get)
-			.subscribeOn(RxHelper.blockingScheduler(vertx))
-			.doOnSuccess(e -> {
-				this.userHandler = new UserCrudHandler(new PocUserDaoImpl(e));
-				this.groupHandler = new GroupCrudHandler(new PocGroupDaoImpl(e));
-				setupRouter(router);
-				logger.info("✅ Hibernate Reactive is ready");
-			});
-
+		// this.userHandler = new UserCrudHandler(new PocUserDaoImpl(emf));
+		// this.groupHandler = new GroupCrudHandler(new PocGroupDaoImpl(emf));
+		setupRouter(router);
 		rxHttpServer.requestHandler(router::handle);
-		Single<HttpServer> startHttpServer = rxHttpServer.rxListen()
+		Completable startHttpServer = rxHttpServer.rxListen()
 			.doOnSubscribe(s -> {
+				logger.info("✅ Hibernate Reactive is ready");
 				logger.info("✅ Server started..");
-			});
+			}).ignoreElement();
 
-		return Observable.merge(startHibernate.toObservable(), startHttpServer.toObservable()).ignoreElements();
+		return startHttpServer;
 	}
 
 	@Override
 	public Completable rxStop() {
-		return rxHttpServer.rxClose();
+		return rxHttpServer.rxClose()
+			.andThen(Completable.fromAction(emf::close));
 	}
 
 	private void setupRouter(Router router) {
@@ -134,6 +125,9 @@ public class ServerVerticle extends AbstractVerticle {
 			.handler(rc -> {
 				JsonObject json = new JsonObject();
 				json.put("username", "joedoe");
+				json.put("email", "joe.doe@acme.nowhere");
+				json.put("firstname", "Joe");
+				json.put("lastname", "Doe");
 				rc.setBody(Buffer.newInstance(json.toBuffer()));
 				rc.next();
 			})

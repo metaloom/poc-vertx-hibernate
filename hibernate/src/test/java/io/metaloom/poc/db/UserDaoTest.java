@@ -2,6 +2,7 @@ package io.metaloom.poc.db;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.util.UUID;
 
@@ -57,6 +58,34 @@ public class UserDaoTest extends AbstractDaoTest {
 			u.setUuid(UUID.fromString(userUUID));
 		}).blockingGet();
 		assertEquals(userUUID, user.getUuid().toString());
+	}
+
+	@Test
+	public void testUserDaoLoad() {
+
+		// 1. Create user
+		String userUUID = "44dee6f7-879c-4c2b-89e1-462e19c99708";
+		PocUser user = userDao.createUser("Iain M. Banks", u -> {
+			u.setEmail("ABCD");
+			u.setUuid(UUID.fromString(userUUID));
+		}).blockingGet();
+
+		// for (int i = 0; i < 10_000; i++) {
+		// userDao.loadUser(user.getUuid()).subscribe(s -> {
+		// System.out.println("Loaded " + s.getUuid());
+		// }, err -> {
+		// err.printStackTrace();
+		// });
+		// }
+
+		for (int i = 0; i < 10_000; i++) {
+			try {
+				userDao.loadUser(user.getUuid()).blockingGet();
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail("Failed after " + i + " runs");
+			}
+		}
 	}
 
 	@Test

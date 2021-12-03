@@ -1,5 +1,7 @@
 package io.metaloom.poc.dagger.module;
 
+import javax.inject.Singleton;
+
 import org.hibernate.reactive.stage.Stage;
 
 import dagger.Module;
@@ -14,6 +16,7 @@ import io.vertx.rxjava3.core.Vertx;
 public class HibernateModule {
 
 	@Provides
+	@Singleton
 	public Stage.SessionFactory sessionFactory(Vertx rxVertx, PocPostgreSQLContainer container, ServerOption serverOptions) {
 		if (!container.isRunning()) {
 			throw new RuntimeException("The database testcontainer was not yet started.");

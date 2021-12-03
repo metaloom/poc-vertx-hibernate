@@ -3,6 +3,9 @@ package io.metaloom.poc.server.impl;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.metaloom.poc.option.ServerOption;
 import io.metaloom.poc.server.RESTServer;
 import io.metaloom.poc.server.ServerVerticle;
@@ -11,6 +14,8 @@ import io.reactivex.rxjava3.core.Observable;
 import io.vertx.rxjava3.core.Vertx;
 
 public class RESTServerImpl implements RESTServer {
+
+	private static final Logger logger = LoggerFactory.getLogger(RESTServerImpl.class);
 
 	private Vertx rxVertx;
 	private Provider<ServerVerticle> verticleProvider;
@@ -32,10 +37,10 @@ public class RESTServerImpl implements RESTServer {
 			nVerticles = options.getVerticleCount();
 		}
 
-		System.out.println("Deploying {" + nVerticles + "} verticles");
+		logger.info("Deploying {" + nVerticles + "} verticles");
 		return Observable.range(0, nVerticles).flatMapCompletable(n -> {
 			return rxVertx.rxDeployVerticle(verticleProvider.get()).doOnSuccess(id -> {
-				System.out.println("Server verticle " + id + " deployed.");
+				logger.info("Server verticle " + id + " deployed.");
 			}).ignoreElement();
 		});
 	}

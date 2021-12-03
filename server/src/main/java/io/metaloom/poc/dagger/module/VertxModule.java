@@ -2,8 +2,12 @@ package io.metaloom.poc.dagger.module;
 
 import javax.inject.Singleton;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dagger.Module;
 import dagger.Provides;
+import io.metaloom.poc.Runner;
 import io.metaloom.poc.option.ServerOption;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
@@ -15,6 +19,8 @@ import io.vertx.ext.web.Router;
 
 @Module
 public class VertxModule {
+
+	private static final Logger logger = LoggerFactory.getLogger(VertxModule.class);
 
 	public static final int SERVER_PORT = 8080;
 	public static final String SERVER_HOST = "localhost";
@@ -33,9 +39,9 @@ public class VertxModule {
 		Vertx vertx = Vertx.vertx(options);
 
 		if (vertx.isNativeTransportEnabled()) {
-			System.out.println("Native transports have been enabled.");
+			logger.info("Native transports have been enabled.");
 		} else {
-			System.err.println("Native transports have not been enabled. Maybe you are not running this on x86_64 linux");
+			logger.warn("Native transports have not been enabled. Maybe you are not running this on x86_64 linux");
 		}
 
 		return vertx;

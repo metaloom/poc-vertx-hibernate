@@ -5,17 +5,22 @@ import static io.metaloom.poc.dagger.module.VertxModule.SERVER_PORT;
 
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.metaloom.poc.dagger.DaggerServerComponent;
 import io.metaloom.poc.dagger.ServerComponent;
 import io.metaloom.poc.option.ServerOption;
 
 public class Runner {
 
+	private static final Logger logger = LoggerFactory.getLogger(Runner.class);
+
 	public static void main(String[] args) {
 		ServerOption options = new ServerOption();
 		options.setPort(8888);
-		options.setVerticleCount(8);
-		options.setHibernatePoolSize(16);
+		options.setVerticleCount(16);
+		options.setHibernatePoolSize(16*8);
 
 		// Inject the options and build the dagger dependency graph
 		ServerComponent serverComponent = DaggerServerComponent
@@ -36,8 +41,8 @@ public class Runner {
 
 		// Start the server
 		serverComponent.restServer().start().subscribe(() -> {
-			System.out.println("REST server started");
-			System.out.println("Now connect to http://" + SERVER_HOST + ":" + SERVER_PORT + "/users");
+			logger.info("REST server started");
+			logger.info("Now connect to http://" + SERVER_HOST + ":" + SERVER_PORT + "/users");
 		}, err -> {
 			err.printStackTrace();
 		});

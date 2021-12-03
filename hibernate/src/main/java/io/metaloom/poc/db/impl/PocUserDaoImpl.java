@@ -34,7 +34,7 @@ public class PocUserDaoImpl extends AbstractDao implements PocUserDao {
 			if (modifier != null) {
 				modifier.accept(user);
 			}
-			CompletionStage<Void> stage = factory.withSession(session -> session.persist(user).thenCompose(r ->  {
+			CompletionStage<Void> stage = factory.withSession(session -> session.persist(user).thenCompose(r -> {
 				return session.flush();
 			}));
 			Completable c = Completable.fromCompletionStage(stage);
@@ -51,7 +51,7 @@ public class PocUserDaoImpl extends AbstractDao implements PocUserDao {
 	@Override
 	public Completable updateUser(PocUser user) {
 		CompletionStage<Void> stage = factory.withSession(session -> {
-			return session.persist(user);
+			return session.persist(user).thenCompose(s -> session.flush());
 		});
 		return Completable.fromCompletionStage(stage);
 	}
@@ -59,7 +59,7 @@ public class PocUserDaoImpl extends AbstractDao implements PocUserDao {
 	@Override
 	public Completable deleteUser(PocUser user) {
 		CompletionStage<Void> stage = factory.withSession(session -> {
-			return session.remove(user).thenAccept(v -> session.flush());
+			return session.remove(user).thenCompose(s -> session.flush());
 		});
 		return Completable.fromCompletionStage(stage);
 	}
