@@ -1,14 +1,14 @@
 package io.metaloom.poc.db.impl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.CompletionStage;
 import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
+import org.hibernate.reactive.mutiny.Mutiny;
 import org.hibernate.reactive.stage.Stage.Query;
-import org.hibernate.reactive.stage.Stage.SessionFactory;
 
 import io.metaloom.poc.db.PocUser;
 import io.metaloom.poc.db.PocUserDao;
@@ -16,11 +16,13 @@ import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
+import io.smallrye.mutiny.Uni;
+import io.smallrye.mutiny.converters.multi.MultiRx3Converters;
 
 public class PocUserDaoImpl extends AbstractDao implements PocUserDao {
 
 	@Inject
-	public PocUserDaoImpl(SessionFactory factory) {
+	public PocUserDaoImpl(Mutiny.SessionFactory factory) {
 		super(factory);
 	}
 
@@ -34,44 +36,40 @@ public class PocUserDaoImpl extends AbstractDao implements PocUserDao {
 			if (modifier != null) {
 				modifier.accept(user);
 			}
-			CompletionStage<Void> stage = factory.withSession(session -> session.persist(user).thenCompose(r -> {
-				return session.flush();
-			}));
-			Completable c = Completable.fromCompletionStage(stage);
-			return c.toSingle(() -> user);
+			Uni<PocUser> uni = factory.withSession(session -> session.persist(user).call(session::flush)).replaceWith(user);
+			return Single.fromCompletionStage(uni.subscribeAsCompletionStage());
 		});
 	}
 
 	@Override
 	public Maybe<? extends PocUser> loadUser(UUID uuid) {
-		CompletionStage<PocUserImpl> stage = factory.withSession(session -> session.find(PocUserImpl.class, uuid));
-		return Maybe.fromCompletionStage(stage);
+		Uni<PocUserImpl> uni = factory.withSession(session -> session.find(PocUserImpl.class, uuid));
+		return Maybe.fromCompletionStage(uni.subscribeAsCompletionStage());
 	}
 
 	@Override
 	public Completable updateUser(PocUser user) {
-		CompletionStage<Void> stage = factory.withSession(session -> {
-			return session.persist(user).thenCompose(s -> session.flush());
+		Uni<Void> uni = factory.withSession(session -> {
+			return session.persist(user).call(session::flush);
 		});
-		return Completable.fromCompletionStage(stage);
+		return Completable.fromCompletionStage(uni.subscribeAsCompletionStage());
 	}
 
 	@Override
 	public Completable deleteUser(PocUser user) {
-		CompletionStage<Void> stage = factory.withSession(session -> {
-			return session.remove(user).thenCompose(s -> session.flush());
+		Uni<Void> uni = factory.withSession(session -> {
+			return session.remove(user).call(session::flush);
 		});
-		return Completable.fromCompletionStage(stage);
+		return Completable.fromCompletionStage(uni.subscribeAsCompletionStage());
 	}
 
 	@Override
 	public Observable<? extends PocUser> loadUsers() {
-		CompletionStage<List<PocUserImpl>> stage = factory.withSession(session -> {
-			Query<PocUserImpl> q = session.createQuery("from PocUserImpl", PocUserImpl.class);
-			CompletionStage<List<PocUserImpl>> list = q.getResultList();
-			return list;
+		Uni<List<PocUserImpl>> uni = factory.withSession(session -> {
+			return session.createQuery("from PocUserImpl", PocUserImpl.class)
+				.getResultList();
 		});
-		return Single.fromCompletionStage(stage).flatMapObservable(list -> {
+		return Single.fromCompletionStage(uni.subscribeAsCompletionStage()).flatMapObservable(list -> {
 			return Observable.fromIterable(list);
 		});
 	}

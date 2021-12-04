@@ -18,7 +18,7 @@ public class Runner {
 
 	public static void main(String[] args) {
 		ServerOption options = new ServerOption();
-		options.setPort(8888);
+		options.setPort(8080);
 		options.setVerticleCount(16);
 		options.setHibernatePoolSize(16*8);
 

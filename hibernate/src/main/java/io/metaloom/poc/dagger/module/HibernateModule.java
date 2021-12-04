@@ -2,6 +2,7 @@ package io.metaloom.poc.dagger.module;
 
 import javax.inject.Singleton;
 
+import org.hibernate.reactive.mutiny.Mutiny;
 import org.hibernate.reactive.stage.Stage;
 
 import dagger.Module;
@@ -17,7 +18,7 @@ public class HibernateModule {
 
 	@Provides
 	@Singleton
-	public Stage.SessionFactory sessionFactory(Vertx rxVertx, PocPostgreSQLContainer container, ServerOption serverOptions) {
+	public Mutiny.SessionFactory sessionFactory(Vertx rxVertx, PocPostgreSQLContainer container, ServerOption serverOptions) {
 		if (!container.isRunning()) {
 			throw new RuntimeException("The database testcontainer was not yet started.");
 		}
@@ -28,8 +29,8 @@ public class HibernateModule {
 		String jdbcUrl = options.getJdbcUrl();
 		String user = options.getUsername();
 		String pass = options.getPassword();
-		Stage.SessionFactory emf = HibernateUtil.sessionFactory(jdbcUrl, user, pass, logging, poolSize)
-			.unwrap(Stage.SessionFactory.class);
+		Mutiny.SessionFactory emf = HibernateUtil.sessionFactory(jdbcUrl, user, pass, logging, poolSize)
+			.unwrap(Mutiny.SessionFactory.class);
 
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			System.out.println("Closing factory");

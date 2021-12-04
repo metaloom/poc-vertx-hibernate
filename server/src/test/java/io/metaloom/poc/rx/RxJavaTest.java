@@ -45,9 +45,11 @@ public class RxJavaTest {
 			}).subscribe(() -> {
 				System.out.println("Completed");
 			}, err -> {
-				if (err instanceof RESTException re && re.code() != 404) {
-					err.printStackTrace();
-					fail("No 404 rest error received.");
+				if (err instanceof RESTException) {
+					if (((RESTException) err).code() == 404) {
+						err.printStackTrace();
+						fail("No 404 rest error received.");
+					}
 				}
 				latch.countDown();
 			});

@@ -9,12 +9,9 @@ import static io.vertx.core.http.HttpMethod.POST;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.hibernate.reactive.stage.Stage.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.poc.db.impl.PocGroupDaoImpl;
-import io.metaloom.poc.db.impl.PocUserDaoImpl;
 import io.metaloom.poc.server.crud.CrudHandler;
 import io.metaloom.poc.server.crud.impl.GroupCrudHandler;
 import io.metaloom.poc.server.crud.impl.UserCrudHandler;
@@ -31,14 +28,12 @@ public class ServerVerticle extends AbstractVerticle {
 	private static final Logger logger = LoggerFactory.getLogger(ServerVerticle.class);
 
 	private final HttpServer rxHttpServer;
-	private final SessionFactory emf;
-	private final CrudHandler groupHandler;
-	private final CrudHandler userHandler;
+	private CrudHandler groupHandler;
+	private CrudHandler userHandler;
 
 	@Inject
-	public ServerVerticle(Provider<HttpServer> rxHttpServerProvider, SessionFactory emf, UserCrudHandler userHandler, GroupCrudHandler groupHandler) {
+	public ServerVerticle(Provider<HttpServer> rxHttpServerProvider, UserCrudHandler userHandler, GroupCrudHandler groupHandler) {
 		this.rxHttpServer = rxHttpServerProvider.get();
-		this.emf = emf;
 		this.userHandler = userHandler;
 		this.groupHandler = groupHandler;
 	}
@@ -46,8 +41,6 @@ public class ServerVerticle extends AbstractVerticle {
 	@Override
 	public Completable rxStart() {
 		Router router = Router.router(vertx);
-		// this.userHandler = new UserCrudHandler(new PocUserDaoImpl(emf));
-		// this.groupHandler = new GroupCrudHandler(new PocGroupDaoImpl(emf));
 		setupRouter(router);
 		rxHttpServer.requestHandler(router::handle);
 		Completable startHttpServer = rxHttpServer.rxListen()
@@ -61,8 +54,7 @@ public class ServerVerticle extends AbstractVerticle {
 
 	@Override
 	public Completable rxStop() {
-		return rxHttpServer.rxClose()
-			.andThen(Completable.fromAction(emf::close));
+		return rxHttpServer.rxClose();
 	}
 
 	private void setupRouter(Router router) {

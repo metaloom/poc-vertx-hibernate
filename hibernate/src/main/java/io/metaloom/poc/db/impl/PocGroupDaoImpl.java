@@ -2,12 +2,10 @@ package io.metaloom.poc.db.impl;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletionStage;
 
 import javax.inject.Inject;
 
-import org.hibernate.reactive.stage.Stage.Query;
-import org.hibernate.reactive.stage.Stage.SessionFactory;
+import org.hibernate.reactive.mutiny.Mutiny;
 
 import io.metaloom.poc.db.PocGroup;
 import io.metaloom.poc.db.PocGroupDao;
@@ -16,11 +14,12 @@ import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
+import io.smallrye.mutiny.Uni;
 
 public class PocGroupDaoImpl extends AbstractDao implements PocGroupDao {
 
 	@Inject
-	public PocGroupDaoImpl(SessionFactory factory) {
+	public PocGroupDaoImpl(Mutiny.SessionFactory factory) {
 		super(factory);
 	}
 
@@ -74,14 +73,14 @@ public class PocGroupDaoImpl extends AbstractDao implements PocGroupDao {
 
 	@Override
 	public Observable<? extends PocGroup> loadGroups() {
-		CompletionStage<List<PocGroupImpl>> stage = factory.withSession(session -> {
-			Query<PocGroupImpl> q = session.createQuery("from PocGroupImpl", PocGroupImpl.class);
-			CompletionStage<List<PocGroupImpl>> list = q.getResultList();
-			return list;
+		Uni<List<PocGroupImpl>> stage = factory.withSession(session -> {
+			return session.createQuery("from PocGroupImpl", PocGroupImpl.class)
+				.getResultList();
 		});
-		return Single.fromCompletionStage(stage).flatMapObservable(list -> {
-			return Observable.fromIterable(list);
-		});
+		return Single.fromCompletionStage(stage.subscribeAsCompletionStage())
+			.flatMapObservable(list -> {
+				return Observable.fromIterable(list);
+			});
 	}
 
 }

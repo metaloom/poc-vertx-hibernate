@@ -32,6 +32,12 @@
 			<artifactId>poc-vertx-hibernate-api</artifactId>
 		</dependency>
 
+		<!-- Reactive -->
+		<dependency>
+			<groupId>io.smallrye.reactive</groupId>
+			<artifactId>mutiny-rxjava3</artifactId>
+		</dependency>
+
 		<!-- Hibernate -->
 		<dependency>
 			<groupId>org.hibernate.reactive</groupId>
@@ -54,7 +60,7 @@
 			<artifactId>vertx-pg-client</artifactId>
 			<groupId>io.vertx</groupId>
 		</dependency>
-		
+
 		<!-- Dagger -->
 		<dependency>
 			<groupId>com.google.dagger</groupId>

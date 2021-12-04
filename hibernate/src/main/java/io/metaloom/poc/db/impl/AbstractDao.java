@@ -1,12 +1,12 @@
 package io.metaloom.poc.db.impl;
 
-import org.hibernate.reactive.stage.Stage.SessionFactory;
+import org.hibernate.reactive.mutiny.Mutiny;
 
 public abstract class AbstractDao {
 
-	protected SessionFactory factory;
+	protected Mutiny.SessionFactory factory;
 
-	public AbstractDao(SessionFactory factory) {
+	public AbstractDao(Mutiny.SessionFactory factory) {
 		this.factory = factory;
 	}
 
