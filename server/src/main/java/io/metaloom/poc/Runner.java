@@ -19,8 +19,8 @@ public class Runner {
 	public static void main(String[] args) {
 		ServerOption options = new ServerOption();
 		options.setPort(8080);
-		options.setVerticleCount(16);
-		options.setHibernatePoolSize(16*8);
+		options.setVerticleCount(8);
+		options.setHibernatePoolSize(16);
 
 		// Inject the options and build the dagger dependency graph
 		ServerComponent serverComponent = DaggerServerComponent

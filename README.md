@@ -77,20 +77,3 @@ The server requires a postgres database. By default this database will be provid
 ## Open Issues
 
 A few issues within the PoC still need solving. 
-
-### Closing of sessions
-
-When exceeding concurrent requests on reading a user row the session manager throws `Session/EntityManager is closed` errors.
-
-```
-java.util.concurrent.CompletionException: java.lang.IllegalStateException: Session/EntityManager is closed
-```
-
-```bash
-cat /proc/cpuinfo   | grep Core | wc -l
-8
-# OK
-wrk -d 10s -c 16 http://localhost:8888/users/6e3f7a29-9c4c-4de5-b577-779f5b5f0328
-# Failing
-wrk -d 10s -c 20 http://localhost:8888/users/6e3f7a29-9c4c-4de5-b577-779f5b5f0328
-```
