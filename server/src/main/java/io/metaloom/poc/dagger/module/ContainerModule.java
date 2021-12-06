@@ -5,6 +5,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import io.metaloom.poc.env.PocPostgreSQLContainer;
+import io.metaloom.poc.option.DatabaseOption;
 
 @Module
 public class ContainerModule {
@@ -22,6 +23,12 @@ public class ContainerModule {
 		}));
 
 		return container;
+	}
+
+	@Provides
+	@Singleton
+	public DatabaseOption databaseOption(PocPostgreSQLContainer container) {
+		return container.getOptions();
 	}
 
 }

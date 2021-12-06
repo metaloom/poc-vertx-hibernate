@@ -3,7 +3,7 @@ package io.metaloom.poc.db;
 import org.junit.Before;
 import org.junit.Rule;
 
-import io.metaloom.poc.db.flyway.FlywayHelper;
+import io.metaloom.poc.db.flyway.dagger.FlywayModule;
 import io.metaloom.poc.env.PocPostgreSQLContainer;
 import io.vertx.core.Vertx;
 
@@ -22,6 +22,6 @@ public class AbstractDaoTest {
 		System.out.println("Username: " + container.getUsername());
 		System.out.println("Password: " + container.getPassword());
 		System.out.println("---");
-		FlywayHelper.migrate(container.getOptions());
+		new FlywayModule().flyway(container.getOptions()).migrate();
 	}
 }

@@ -1,14 +1,12 @@
 package io.metaloom.poc.db.impl;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
 import org.hibernate.reactive.mutiny.Mutiny;
-import org.hibernate.reactive.stage.Stage.Query;
 
 import io.metaloom.poc.db.PocUser;
 import io.metaloom.poc.db.PocUserDao;
@@ -17,7 +15,6 @@ import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 import io.smallrye.mutiny.Uni;
-import io.smallrye.mutiny.converters.multi.MultiRx3Converters;
 
 public class PocUserDaoImpl extends AbstractDao implements PocUserDao {
 

@@ -9,7 +9,7 @@ It consists of the following components:
 | bom         | Bill Of Materials POM which tracks all dependency versions.      |
 | api         | API Module which contains interfaces for the DAO implementation. |
 | io-uring    | Vert.x Patches which will enable io uring support in Netty.      |
-| flyway      | Flyway database migration helper. (Currently not setup)          |
+| flyway      | Flyway database migration helper.                                |
 | hibernate   | Hibernate module which contains the reactive DAO implementations |
 | rest        | Vert.x REST API implementation                                   |
 | server      | Vert.x Http Server runner which provides the REST API            |
@@ -57,14 +57,14 @@ java -jar server/target/poc-vertx-hibernate-server-0.0.1-SNAPSHOT.jar
 
 1. The `Runner` class prepares the Dagger 2 dependency graph which is needed for dependency injection.
 2. The `io.metaloom.poc.dagger.module` dagger modules prepare various components for DI that are outside of the project (e.g. Vert.x `VertxModule`, Hibernate `HibernateModule`, TestContainer `ContainerModule`)
-3. The `RESTServerImpl` class deploys the `ServerVerticle` verticles which will be provided by dagger.
-4. The `ServerVerticle` verticles startup a `HttpServer` and register the Vert.x routes for the REST API.
-5. The handlers for the routes are located within the `GroupCrudHandler` and `UserCrudHandler` classes. The handler code utilizes RxJava3 and the Hibernate DAO implementation to interact with the database.
+2. The `Bootstrap` class will be used to setup the individual components in the right order (e.g. container->flyway->hibernate->server)
+4. The `RESTServerImpl` class deploys the `ServerVerticle` verticles which will be provided by dagger.
+5. The `ServerVerticle` verticles startup a `HttpServer` and register the Vert.x routes for the REST API.
+6. The handlers for the routes are located within the `GroupCrudHandler` and `UserCrudHandler` classes. The handler code utilizes RxJava3 and the Hibernate DAO implementation to interact with the database.
 
 ## Docker
 
 The server requires a postgres database. By default this database will be provides using `TestContainers` during startup of the demo application.
-
 
 ## Open Task
 

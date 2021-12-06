@@ -4,9 +4,8 @@ Enable UUID V4 Support
 */
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TABLE "user" (
+CREATE TABLE "users" (
   "uuid" uuid DEFAULT uuid_generate_v4 (),
-  "username" varchar UNIQUE NOT NULL,
   "firstname" varchar,
   "lastname" varchar,
   "passwordhash" varchar,
@@ -20,7 +19,7 @@ CREATE TABLE "user" (
   PRIMARY KEY ("uuid")
 );
 
-CREATE TABLE "group" (
+CREATE TABLE "groups" (
   "uuid" uuid DEFAULT uuid_generate_v4 (),
   "name" varchar UNIQUE NOT NULL,
   "meta" varchar,
@@ -31,18 +30,18 @@ CREATE TABLE "group" (
   PRIMARY KEY ("uuid")
 );
 
-CREATE TABLE "user_group" (
+CREATE TABLE "users_groups" (
   "user_uuid" uuid NOT NULL,
   "group_uuid" uuid NOT NULL,
   PRIMARY KEY ("user_uuid", "group_uuid")
 );
 
-ALTER TABLE "user" ADD FOREIGN KEY ("creator_uuid") REFERENCES "user" ("uuid");
-ALTER TABLE "user" ADD FOREIGN KEY ("editor_uuid") REFERENCES "user" ("uuid");
-ALTER TABLE "group" ADD FOREIGN KEY ("creator_uuid") REFERENCES "user" ("uuid");
-ALTER TABLE "group" ADD FOREIGN KEY ("editor_uuid") REFERENCES "user" ("uuid");
-ALTER TABLE "user_group" ADD FOREIGN KEY ("user_uuid") REFERENCES "user" ("uuid");
-ALTER TABLE "user_group" ADD FOREIGN KEY ("group_uuid") REFERENCES "group" ("uuid");
+ALTER TABLE "users" ADD FOREIGN KEY ("creator_uuid") REFERENCES "users" ("uuid");
+ALTER TABLE "users" ADD FOREIGN KEY ("editor_uuid") REFERENCES "users" ("uuid");
+ALTER TABLE "groups" ADD FOREIGN KEY ("creator_uuid") REFERENCES "users" ("uuid");
+ALTER TABLE "groups" ADD FOREIGN KEY ("editor_uuid") REFERENCES "users" ("uuid");
+ALTER TABLE "users_groups" ADD FOREIGN KEY ("user_uuid") REFERENCES "users" ("uuid");
+ALTER TABLE "users_groups" ADD FOREIGN KEY ("group_uuid") REFERENCES "groups" ("uuid");
 
-CREATE UNIQUE INDEX ON "user" ("username");
-CREATE UNIQUE INDEX ON "group" ("name");
+CREATE UNIQUE INDEX ON "groups" ("name");
+

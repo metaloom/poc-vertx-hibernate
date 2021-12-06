@@ -32,12 +32,6 @@
 			<artifactId>poc-vertx-hibernate-api</artifactId>
 		</dependency>
 
-		<!-- Reactive -->
-		<dependency>
-			<groupId>io.smallrye.reactive</groupId>
-			<artifactId>mutiny-rxjava3</artifactId>
-		</dependency>
-
 		<!-- Hibernate -->
 		<dependency>
 			<groupId>org.hibernate.reactive</groupId>

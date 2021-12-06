@@ -40,6 +40,10 @@
 			<artifactId>poc-vertx-hibernate-rest</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>io.metaloom.poc</groupId>
+			<artifactId>poc-vertx-hibernate-flyway</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 		</dependency>
@@ -49,7 +53,7 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>

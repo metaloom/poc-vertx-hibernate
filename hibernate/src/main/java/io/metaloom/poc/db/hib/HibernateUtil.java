@@ -40,8 +40,9 @@ public final class HibernateUtil {
 		// settings.put(Environment.DIALECT, "");
 		settings.put(Environment.JPA_PERSISTENCE_PROVIDER, ReactivePersistenceProvider.class.getName());
 		// settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
-		// settings.put(Environment.HBM2DDL_AUTO, "create-drop");
-		settings.put(Environment.HBM2DDL_DATABASE_ACTION, "drop-and-create");
+		settings.put(Environment.HBM2DDL_AUTO, "validate");
+		//settings.put(Environment.HBM2DDL_DATABASE_ACTION, "drop-and-create");
+		//settings.put(Environment.HBM2DDL_DATABASE_ACTION, "validate");
 
 		// Model
 		configuration.setProperties(settings);

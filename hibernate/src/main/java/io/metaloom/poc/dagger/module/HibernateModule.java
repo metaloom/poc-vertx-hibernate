@@ -3,7 +3,6 @@ package io.metaloom.poc.dagger.module;
 import javax.inject.Singleton;
 
 import org.hibernate.reactive.mutiny.Mutiny;
-import org.hibernate.reactive.stage.Stage;
 
 import dagger.Module;
 import dagger.Provides;
@@ -24,7 +23,7 @@ public class HibernateModule {
 		}
 
 		DatabaseOption options = container.getOptions();
-		boolean logging = false;
+		boolean logging = true;
 		int poolSize = serverOptions.getHibernatePoolSize();
 		String jdbcUrl = options.getJdbcUrl();
 		String user = options.getUsername();
@@ -38,6 +37,7 @@ public class HibernateModule {
 				emf.close();
 			}
 		}));
+
 		return emf;
 	}
 }
