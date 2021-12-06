@@ -23,7 +23,7 @@ public class HibernateModule {
 		}
 
 		DatabaseOption options = container.getOptions();
-		boolean logging = true;
+		boolean logging = false;
 		int poolSize = serverOptions.getHibernatePoolSize();
 		String jdbcUrl = options.getJdbcUrl();
 		String user = options.getUsername();
