@@ -69,11 +69,7 @@ The server requires a postgres database. By default this database will be provid
 ## Open Task
 
 * API Testing
-* Logging Setup
 * Open API handling
 * Authentication?
 * Metrics?
 
-## Open Issues
-
-A few issues within the PoC still need solving. 
