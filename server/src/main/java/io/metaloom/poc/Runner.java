@@ -1,5 +1,7 @@
 package io.metaloom.poc;
 
+import java.io.File;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,10 +11,12 @@ import io.metaloom.poc.option.ServerOption;
 
 public class Runner {
 
-	private static final Logger logger = LoggerFactory.getLogger(Runner.class);
-
 	public static void main(String[] args) {
-		logger.info("Starting Vert.x Hibernate PoC");
+		// Use logback for logging
+		File logbackFile = new File("config", "logback.xml");
+		System.setProperty("logback.configurationFile", logbackFile.getAbsolutePath());
+		Logger log = LoggerFactory.getLogger(Runner.class);
+		log.info("Starting Vert.x Hibernate PoC");
 		ServerOption options = new ServerOption();
 		options.setPort(8080);
 		options.setVerticleCount(8);

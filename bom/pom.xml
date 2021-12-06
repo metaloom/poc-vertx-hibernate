@@ -20,6 +20,7 @@
 		<hibernate.reactive.version>1.1.0.Final</hibernate.reactive.version>
 		<logback-classic.version>1.2.6</logback-classic.version>
 		<log4j.version>2.11.2</log4j.version>
+		<graalvm.version>21.3.0</graalvm.version>
 	</properties>
 
 	<dependencyManagement>
@@ -193,20 +194,16 @@
 
 			<!-- Logging -->
 			<dependency>
-				<groupId>org.apache.logging.log4j</groupId>
-				<artifactId>log4j-core</artifactId>
-				<version>${log4j.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.logging.log4j</groupId>
-				<artifactId>log4j-slf4j18-impl</artifactId>
-				<version>${log4j.version}</version>
-			</dependency>
-			<dependency>
 				<groupId>ch.qos.logback</groupId>
 				<artifactId>logback-classic</artifactId>
 				<version>${logback-classic.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>1.7.32</version>
+			</dependency>
+
 
 			<dependency>
 				<groupId>org.jetbrains</groupId>
@@ -236,6 +233,12 @@
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
 				<version>4.13.2</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.graalvm.sdk</groupId>
+				<artifactId>graal-sdk</artifactId>
+				<version>${graalvm.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

@@ -73,3 +73,14 @@ The server requires a postgres database. By default this database will be provid
 * Authentication?
 * Metrics?
 
+## Native Image
+
+* Download [GraalVM](https://www.graalvm.org/downloads/)
+* Run `gu install native-image` in the extracted JDK to install `native-image` support.
+
+* Build the image
+
+```
+export JAVA_HOME=/opt/jvm/graalvm
+mvn clean package -DskipTests -Pnative-image
+```

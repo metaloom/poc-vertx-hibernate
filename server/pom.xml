@@ -15,7 +15,61 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<exec.mainClass>io.metaloom.poc.Runner</exec.mainClass>
 	</properties>
+
+	<profiles>
+		<profile>
+			<id>native-image</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.graalvm.buildtools</groupId>
+						<artifactId>native-maven-plugin</artifactId>
+						<version>0.9.8</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>build</goal>
+								</goals>
+								<phase>package</phase>
+							</execution>
+						</executions>
+						<configuration>
+							<imageName>poc-server</imageName>
+							<mainClass>${exec.mainClass}</mainClass>
+							<buildArgs>
+								<buildArg>-Dio.netty.noUnsafe=true</buildArg>
+								<buildArg>--verbose</buildArg>
+								<buildArg>--no-fallback</buildArg>
+								<buildArg>--allow-incomplete-classpath</buildArg>
+								<buildArg>--trace-class-initialization=ch.qos.logback.classic.Logger</buildArg>
+								<buildArg>--report-unsupported-elements-at-runtime</buildArg>
+								<buildArg>--initialize-at-build-time=org.slf4j.LoggerFactory,org.slf4j.impl.StaticLoggerBinder$,io.netty,io.vertx,com.fasterxml.jackson</buildArg>
+								<buildArg>--initialize-at-run-time=io.netty.channel.DefaultChannelId,io.netty.buffer.PooledByteBufAllocator,io.vertx.core.net.impl.PartialPooledByteBufAllocator,io.netty.util.NetUtil,io.netty.channel.socket.InternetProtocolFamily,io.netty.resolver.HostsFileEntriesResolver,io.netty.resolver.dns.DnsNameResolver,io.netty.resolver.dns.DnsServerAddressStreamProviders,io.netty.resolver.dns.PreferredAddressTypeComparator$1,io.netty.resolver.dns.DefaultDnsServerAddressStreamProvider,io.vertx.core.impl.AddressResolver,io.vertx.core.dns.AddressResolverOptions,io.netty.handler.codec.http.websocketx.extensions.compression.DeflateEncoder,io.netty.handler.codec.http.websocketx.extensions.compression.DeflateDecoder,io.netty.handler.codec.http.HttpObjectEncoder,io.netty.handler.codec.http.websocketx.WebSocket00FrameEncoder,io.netty.handler.codec.http2.Http2CodecUtil,io.netty.handler.codec.http2.Http2ConnectionHandler,io.netty.handler.codec.http2.DefaultHttp2FrameWriter,io.netty.util.internal.logging.Log4JLogger,io.netty.handler.ssl.ReferenceCountedOpenSslServerContext,io.netty.handler.ssl.JdkNpnApplicationProtocolNegotiator,io.netty.handler.ssl.ReferenceCountedOpenSslEngine,io.netty.handler.ssl.ConscryptAlpnSslEngine,io.netty.handler.ssl.JettyNpnSslEngine,io.netty.handler.ssl.JettyAlpnSslEngine$ClientEngine,io.netty.handler.ssl.JettyAlpnSslEngine$ServerEngine,io.netty.handler.ssl.ReferenceCountedOpenSslContext,io.netty.handler.ssl.ReferenceCountedOpenSslClientContext,io.netty.buffer.ByteBufUtil$HexUtil,io.vertx.core.net.impl.transport.EpollTransport,io.vertx.core.net.impl.transport.KQueueTransport,io.vertx.core.http.impl.VertxHttp2ClientUpgradeCodec,io.netty.resolver.dns.DnsServerAddressStreamProviders$DefaultProviderHolder,io.vertx.core.eventbus.impl.clustered.ClusteredEventBus,io.netty.channel.unix,io.netty.channel.epoll,io.netty.buffer.ByteBufUtil$HexUtil</buildArg>
+								<buildArg>-H:+ReportExceptionStackTraces</buildArg>
+							</buildArgs>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+
+			<pluginRepositories>
+				<pluginRepository>
+					<id>graalvm-native-build-tools-snapshots</id>
+					<name>GraalVM native-build-tools Snapshots</name>
+					<url>https://raw.githubusercontent.com/graalvm/native-build-tools/snapshots</url>
+					<releases>
+						<enabled>false</enabled>
+					</releases>
+					<snapshots>
+						<enabled>true</enabled>
+					</snapshots>
+				</pluginRepository>
+			</pluginRepositories>
+		</profile>
+
+	</profiles>
 
 	<dependencyManagement>
 		<dependencies>
@@ -31,10 +85,8 @@
 
 	<dependencies>
 		<!-- Project -->
-		<dependency>
-			<groupId>io.metaloom.poc</groupId>
-			<artifactId>poc-vertx-hibernate-io-uring</artifactId>
-		</dependency>
+		<!-- <dependency> <groupId>io.metaloom.poc</groupId> <artifactId>poc-vertx-hibernate-io-uring</artifactId> 
+			</dependency> -->
 		<dependency>
 			<groupId>io.metaloom.poc</groupId>
 			<artifactId>poc-vertx-hibernate-rest</artifactId>
@@ -53,6 +105,10 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -64,6 +120,11 @@
 			<groupId>com.google.dagger</groupId>
 			<artifactId>dagger-compiler</artifactId>
 			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.graalvm.sdk</groupId>
+			<artifactId>graal-sdk</artifactId>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 
@@ -83,7 +144,7 @@
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>io.metaloom.poc.Runner</mainClass>
+									<mainClass>${exec.mainClass}</mainClass>
 								</transformer>
 							</transformers>
 						</configuration>
