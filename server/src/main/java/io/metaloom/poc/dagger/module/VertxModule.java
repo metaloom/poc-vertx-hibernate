@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import dagger.Module;
 import dagger.Provides;
-import io.metaloom.poc.Runner;
 import io.metaloom.poc.option.ServerOption;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;

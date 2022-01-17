@@ -15,11 +15,10 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<vertx.version>4.2.1</vertx.version>
+		<vertx.version>4.2.3</vertx.version>
 		<hibernate.orm.version>5.6.1.Final</hibernate.orm.version>
-		<hibernate.reactive.version>1.1.0.Final</hibernate.reactive.version>
-		<logback-classic.version>1.2.6</logback-classic.version>
-		<log4j.version>2.11.2</log4j.version>
+		<hibernate.reactive.version>1.1.2.Final</hibernate.reactive.version>
+		<logback-classic.version>1.2.10</logback-classic.version>
 		<graalvm.version>21.3.0</graalvm.version>
 	</properties>
 
@@ -28,7 +27,7 @@
 			<dependency>
 				<groupId>io.vertx</groupId>
 				<artifactId>vertx-stack-depchain</artifactId>
-				<version>4.2.1</version>
+				<version>4.2.3</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -76,7 +75,7 @@
 			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
-				<version>30.1.1-jre</version>
+				<version>31.0.1-jre</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-cli</groupId>

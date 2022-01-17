@@ -21,7 +21,7 @@
 
 	<properties>
 		<postgres.driver.version>42.2.23</postgres.driver.version>
-		<dagger.version> 2.39.1</dagger.version>
+		<dagger.version>2.39.1</dagger.version>
 	</properties>
 
 	<build>
